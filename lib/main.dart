@@ -80,30 +80,31 @@ class _GreedBoxesAppState extends State<GreedBoxesApp> {
       title: 'صناديق الطمع - Greed Boxes',
       debugShowCheckedModeBanner: false,
       // Premium Light Theme definition
-      theme: ThemeData.light().copyWith(
-        scaffoldBackgroundColor: const Color(0xFFF4F6FB),
-        primaryColor: const Color(0xFFFFB703),
-        colorScheme: const ColorScheme.light(
-          primary: Color(0xFFFFB703),      // Neon Gold Accent
-          secondary: Color(0xFF06D6A0),    // Neon Green Accent
-          error: Color(0xFFFF5E62),        // Neon Red Accent
-          surface: Colors.white,
+      theme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: const Color(0xFF0C0518), // Deep Dark Purple
+        primaryColor: const Color(0xFFFFB703),            // Neon Gold
+        colorScheme: const ColorScheme.dark(
+          primary: Color(0xFFFFB703),      // Gold
+          secondary: Color(0xFF06D6A0),    // Mint Green
+          error: Color(0xFFFF5E62),        // Bright Crimson
+          surface: Color(0xFF190F2D),      // Luxury Purple Card Surface
         ),
         cardTheme: CardThemeData(
-          color: Colors.white,
+          color: const Color(0xFF190F2D),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          elevation: 2,
-          shadowColor: Colors.black.withOpacity(0.05),
+          elevation: 4,
+          shadowColor: Colors.black.withValues(alpha:0.4),
         ),
         appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFFF4F6FB),
-          foregroundColor: Colors.black,
+          backgroundColor: Color(0xFF0C0518),
+          foregroundColor: Colors.white,
           elevation: 0,
           centerTitle: true,
-          iconTheme: IconThemeData(color: Colors.black),
+          iconTheme: IconThemeData(color: Colors.white),
         ),
       ),
       home: auth.isAuthenticated ? const MainNavigationPage() : const AuthLandingPage(),
     );
   }
 }
+

@@ -11,7 +11,8 @@ class ChestWidget extends StatefulWidget {
   final double userBetAmount;
   final String totalBets;
   final bool isHot;
-  final String gameStatus; // To trigger animations based on state (BETTING, CALCULATING, etc.)
+  final String
+      gameStatus; // To trigger animations based on state (BETTING, CALCULATING, etc.)
 
   const ChestWidget({
     super.key,
@@ -31,7 +32,8 @@ class ChestWidget extends StatefulWidget {
   State<ChestWidget> createState() => _ChestWidgetState();
 }
 
-class _ChestWidgetState extends State<ChestWidget> with TickerProviderStateMixin {
+class _ChestWidgetState extends State<ChestWidget>
+    with TickerProviderStateMixin {
   late AnimationController _idleController;
   late AnimationController _glowController;
   late AnimationController _openController;
@@ -70,7 +72,9 @@ class _ChestWidgetState extends State<ChestWidget> with TickerProviderStateMixin
     );
 
     _openController.addListener(() {
-      if (_openController.value > 0.1 && _particles.isEmpty && widget.isWinner) {
+      if (_openController.value > 0.1 &&
+          _particles.isEmpty &&
+          widget.isWinner) {
         _spawnParticles();
       }
       setState(() {});
@@ -86,13 +90,14 @@ class _ChestWidgetState extends State<ChestWidget> with TickerProviderStateMixin
       _glowController.repeat(reverse: true);
     } else {
       _glowController.stop();
-      _glowController.setValue(0.0);
+      _glowController.value = 0.0;
     }
 
     // Phase 5 & 6: Trigger lid open & coin particles when winner
     if (widget.openProgress > 0) {
       if (_openController.value != widget.openProgress) {
-        _openController.animateTo(widget.openProgress, duration: const Duration(milliseconds: 300));
+        _openController.animateTo(widget.openProgress,
+            duration: const Duration(milliseconds: 300));
       }
     } else {
       _openController.reset();
@@ -113,7 +118,8 @@ class _ChestWidgetState extends State<ChestWidget> with TickerProviderStateMixin
     // Spawn 30 to 50 coin particles
     final count = 30 + _random.nextInt(21);
     for (int i = 0; i < count; i++) {
-      final double angle = -pi / 6 - _random.nextDouble() * (2 * pi / 3); // upward arc
+      final double angle =
+          -pi / 6 - _random.nextDouble() * (2 * pi / 3); // upward arc
       final double speed = 3.0 + _random.nextDouble() * 5.0;
       _particles.add(
         CoinParticle(
@@ -143,7 +149,8 @@ class _ChestWidgetState extends State<ChestWidget> with TickerProviderStateMixin
     final bool isPremium = widget.multiplierValue > 5;
     final double baseWidth = isPremium ? 78.0 : 68.0;
     final double baseHeight = isPremium ? 74.0 : 64.0;
-    final isCash = widget.totalBets.contains("💵") || widget.totalBets.contains("Cash");
+    final isCash =
+        widget.totalBets.contains("💵") || widget.totalBets.contains("Cash");
 
     if (_particles.isNotEmpty) {
       _updateParticles();
@@ -151,11 +158,14 @@ class _ChestWidgetState extends State<ChestWidget> with TickerProviderStateMixin
 
     // Phase 3 & 4: Winner scale up and dimming others
     // If there is a winner, darken non-winners. Scale winner by 1.2
-    final isAnyWinnerRevealed = widget.gameStatus == "REVEALING" || widget.gameStatus == "FINALIZING";
-    final double targetOpacity = (isAnyWinnerRevealed && !widget.isWinner) ? 0.35 : 1.0;
-    
+    final isAnyWinnerRevealed =
+        widget.gameStatus == "REVEALING" || widget.gameStatus == "FINALIZING";
+    final double targetOpacity =
+        (isAnyWinnerRevealed && !widget.isWinner) ? 0.35 : 1.0;
+
     // Scale transition for winner (1.0 -> 1.2)
-    final double targetScale = (isAnyWinnerRevealed && widget.isWinner) ? 1.2 : 1.0;
+    final double targetScale =
+        (isAnyWinnerRevealed && widget.isWinner) ? 1.2 : 1.0;
 
     return Opacity(
       opacity: targetOpacity,
@@ -175,7 +185,8 @@ class _ChestWidgetState extends State<ChestWidget> with TickerProviderStateMixin
                   if (widget.totalBets.isNotEmpty)
                     Container(
                       margin: const EdgeInsets.only(bottom: 4),
-                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 5, vertical: 1),
                       decoration: BoxDecoration(
                         color: Colors.black45,
                         borderRadius: BorderRadius.circular(4),
@@ -184,7 +195,8 @@ class _ChestWidgetState extends State<ChestWidget> with TickerProviderStateMixin
                         widget.totalBets,
                         style: TextStyle(
                           fontSize: 9,
-                          color: isCash ? Colors.cyanAccent : Colors.amberAccent,
+                          color:
+                              isCash ? Colors.cyanAccent : Colors.amberAccent,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -200,9 +212,12 @@ class _ChestWidgetState extends State<ChestWidget> with TickerProviderStateMixin
                       AnimatedBuilder(
                         animation: _glowAnimation,
                         builder: (context, _) {
-                          final double glowPower = (widget.gameStatus == "CALCULATING")
-                              ? _glowAnimation.value
-                              : (widget.isWinner ? 1.0 : (widget.isSelected ? 0.6 : 0.0));
+                          final double glowPower =
+                              (widget.gameStatus == "CALCULATING")
+                                  ? _glowAnimation.value
+                                  : (widget.isWinner
+                                      ? 1.0
+                                      : (widget.isSelected ? 0.6 : 0.0));
                           if (glowPower <= 0) return const SizedBox.shrink();
 
                           return Positioned.fill(
@@ -212,8 +227,10 @@ class _ChestWidgetState extends State<ChestWidget> with TickerProviderStateMixin
                                 boxShadow: [
                                   BoxShadow(
                                     color: widget.isWinner
-                                        ? Colors.green.withOpacity(0.6 * glowPower)
-                                        : widget.color.withOpacity(0.5 * glowPower),
+                                        ? Colors.green
+                                            .withValues(alpha:0.6 * glowPower)
+                                        : widget.color
+                                            .withValues(alpha:0.5 * glowPower),
                                     blurRadius: 25 * glowPower,
                                     spreadRadius: 3 * glowPower,
                                   )
@@ -249,16 +266,21 @@ class _ChestWidgetState extends State<ChestWidget> with TickerProviderStateMixin
                               return Transform.scale(
                                 scale: value,
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 4),
                                   decoration: BoxDecoration(
                                     gradient: const LinearGradient(
                                       colors: [Colors.amber, Colors.orange],
                                     ),
                                     borderRadius: BorderRadius.circular(12),
                                     boxShadow: const [
-                                      BoxShadow(color: Colors.black45, blurRadius: 6, offset: Offset(0, 3)),
+                                      BoxShadow(
+                                          color: Colors.black45,
+                                          blurRadius: 6,
+                                          offset: Offset(0, 3)),
                                     ],
-                                    border: Border.all(color: Colors.white70, width: 1),
+                                    border: Border.all(
+                                        color: Colors.white70, width: 1),
                                   ),
                                   child: Text(
                                     "🎉 ${widget.multiplierValue}X",
@@ -284,9 +306,12 @@ class _ChestWidgetState extends State<ChestWidget> with TickerProviderStateMixin
                             decoration: const BoxDecoration(
                               color: Colors.green,
                               shape: BoxShape.circle,
-                              boxShadow: [BoxShadow(color: Colors.black45, blurRadius: 4)],
+                              boxShadow: [
+                                BoxShadow(color: Colors.black45, blurRadius: 4)
+                              ],
                             ),
-                            child: const Icon(Icons.check, size: 10, color: Colors.white),
+                            child: const Icon(Icons.check,
+                                size: 10, color: Colors.white),
                           ),
                         ),
 
@@ -300,10 +325,14 @@ class _ChestWidgetState extends State<ChestWidget> with TickerProviderStateMixin
                             decoration: const BoxDecoration(
                               color: Colors.orange,
                               shape: BoxShape.circle,
-                              boxShadow: [BoxShadow(color: Colors.black45, blurRadius: 4)],
+                              boxShadow: [
+                                BoxShadow(color: Colors.black45, blurRadius: 4)
+                              ],
                             ),
-                            child: const Icon(Icons.local_fire_department_rounded,
-                                color: Colors.white, size: 10),
+                            child: const Icon(
+                                Icons.local_fire_department_rounded,
+                                color: Colors.white,
+                                size: 10),
                           ),
                         ),
                     ],
@@ -320,14 +349,15 @@ class _ChestWidgetState extends State<ChestWidget> with TickerProviderStateMixin
                   if (widget.userBetAmount > 0) ...[
                     const SizedBox(height: 2),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
                         color: Colors.black54,
                         borderRadius: BorderRadius.circular(4),
                         border: Border.all(
                           color: isCash
-                              ? Colors.cyanAccent.withOpacity(0.6)
-                              : Colors.amberAccent.withOpacity(0.6),
+                              ? Colors.cyanAccent.withValues(alpha:0.6)
+                              : Colors.amberAccent.withValues(alpha:0.6),
                           width: 0.5,
                         ),
                       ),
@@ -335,7 +365,8 @@ class _ChestWidgetState extends State<ChestWidget> with TickerProviderStateMixin
                         widget.userBetAmount.toStringAsFixed(0),
                         style: TextStyle(
                           fontSize: 9,
-                          color: isCash ? Colors.cyanAccent : Colors.amberAccent,
+                          color:
+                              isCash ? Colors.cyanAccent : Colors.amberAccent,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -396,26 +427,27 @@ class ChestPainter extends CustomPainter {
 
     // Theme values corresponding to standard and premium tiers
     Color primaryColor = color;
-    Color borderMetalColor = const Color(0xFFB0BEC5); // Sleek silver borders/metals
+    Color borderMetalColor =
+        const Color(0xFFB0BEC5); // Sleek silver borders/metals
     Color gemsColor = Colors.transparent;
 
     // Stylize each box specific theme and gems (Mobile Casino Premium Style)
     if (multiplier == 45) {
-      primaryColor = const Color(0xFFFF3D00);    // Royal red-orange
+      primaryColor = const Color(0xFFFF3D00); // Royal red-orange
       borderMetalColor = const Color(0xFFFFD700); // Gold borders
-      gemsColor = const Color(0xFFFF1744);        // Big red ruby gem
+      gemsColor = const Color(0xFFFF1744); // Big red ruby gem
     } else if (multiplier == 25) {
-      primaryColor = const Color(0xFF1A237E);    // Deep sapphire indigo
+      primaryColor = const Color(0xFF1A237E); // Deep sapphire indigo
       borderMetalColor = const Color(0xFF90A4AE); // Steel borders
-      gemsColor = const Color(0xFF00E5FF);        // Big blue diamond gem
+      gemsColor = const Color(0xFF00E5FF); // Big blue diamond gem
     } else if (multiplier == 15) {
-      primaryColor = const Color(0xFF880E4F);    // Deep magenta
+      primaryColor = const Color(0xFF880E4F); // Deep magenta
       borderMetalColor = const Color(0xFFFF80AB); // Soft rose gold borders
-      gemsColor = const Color(0xFFE040FB);        // Purple amethyst gem
+      gemsColor = const Color(0xFFE040FB); // Purple amethyst gem
     } else if (multiplier == 10) {
-      primaryColor = const Color(0xFF0D47A1);    // Arctic ice blue
+      primaryColor = const Color(0xFF0D47A1); // Arctic ice blue
       borderMetalColor = const Color(0xFFE0F7FA); // Ice crystals silver borders
-      gemsColor = const Color(0xFF00B0FF);        // Glowing cyan icy star gem
+      gemsColor = const Color(0xFF00B0FF); // Glowing cyan icy star gem
     }
 
     final double bodyTop = h * 0.44;
@@ -472,20 +504,25 @@ class ChestPainter extends CustomPainter {
           colors: [Color(0xFFFFF176), Color(0xFFFFB300)],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-        ).createShader(Rect.fromLTRB(bodyLeft + 4, bodyTop - 8, bodyRight - 4, bodyTop + 4))
+        ).createShader(Rect.fromLTRB(
+            bodyLeft + 4, bodyTop - 8, bodyRight - 4, bodyTop + 4))
         ..style = PaintingStyle.fill;
 
       final RRect goldRRect = RRect.fromRectAndRadius(
-        Rect.fromLTRB(bodyLeft + 4, bodyTop - 6 * openProgress, bodyRight - 4, bodyTop + 4),
+        Rect.fromLTRB(bodyLeft + 4, bodyTop - 6 * openProgress, bodyRight - 4,
+            bodyTop + 4),
         const Radius.circular(4),
       );
       canvas.drawRRect(goldRRect, goldStackPaint);
 
       // Draw shiny sparkle stars
       final Paint sparklePaint = Paint()..color = Colors.white;
-      _drawSparkle(canvas, w * 0.5, bodyTop - 8, 4 * openProgress, sparklePaint);
-      _drawSparkle(canvas, w * 0.3, bodyTop - 4, 3 * openProgress, sparklePaint);
-      _drawSparkle(canvas, w * 0.7, bodyTop - 5, 3 * openProgress, sparklePaint);
+      _drawSparkle(
+          canvas, w * 0.5, bodyTop - 8, 4 * openProgress, sparklePaint);
+      _drawSparkle(
+          canvas, w * 0.3, bodyTop - 4, 3 * openProgress, sparklePaint);
+      _drawSparkle(
+          canvas, w * 0.7, bodyTop - 5, 3 * openProgress, sparklePaint);
     }
 
     // Metal Borders for Chest base
@@ -507,8 +544,10 @@ class ChestPainter extends CustomPainter {
         end: Alignment.bottomCenter,
       ).createShader(Rect.fromLTRB(bodyLeft, bodyTop, bodyRight, bodyBottom));
 
-    canvas.drawRect(Rect.fromLTRB(w * 0.26, bodyTop, w * 0.34, bodyBottom), metalBandPaint);
-    canvas.drawRect(Rect.fromLTRB(w * 0.66, bodyTop, w * 0.74, bodyBottom), metalBandPaint);
+    canvas.drawRect(
+        Rect.fromLTRB(w * 0.26, bodyTop, w * 0.34, bodyBottom), metalBandPaint);
+    canvas.drawRect(
+        Rect.fromLTRB(w * 0.66, bodyTop, w * 0.74, bodyBottom), metalBandPaint);
 
     // ─── 3. Draw Lid/Cover with Rotation (Rotate X simulation) ───
     canvas.save();
@@ -516,7 +555,8 @@ class ChestPainter extends CustomPainter {
     final double pivotY = bodyTop;
     // Rotate lid upward based on progress (Translate & scale vertically to mimic 3D angle)
     final double lidRotationAngle = -openProgress * (pi / 2.2);
-    final double verticalCompression = cos(lidRotationAngle); // Mimic 3D perspective
+    final double verticalCompression =
+        cos(lidRotationAngle); // Mimic 3D perspective
 
     canvas.translate(w * 0.5, pivotY);
     canvas.scale(1.0, verticalCompression);
@@ -530,9 +570,11 @@ class ChestPainter extends CustomPainter {
     // Curved Dome Cover
     final Path lidPath = Path()
       ..moveTo(lidLeft, lidBottom)
-      ..quadraticBezierTo(lidLeft - 1, lidTop + (lidBottom - lidTop) * 0.25, lidLeft + (lidRight - lidLeft) * 0.1, lidTop)
+      ..quadraticBezierTo(lidLeft - 1, lidTop + (lidBottom - lidTop) * 0.25,
+          lidLeft + (lidRight - lidLeft) * 0.1, lidTop)
       ..lineTo(lidRight - (lidRight - lidLeft) * 0.1, lidTop)
-      ..quadraticBezierTo(lidRight + 1, lidTop + (lidBottom - lidTop) * 0.25, lidRight, lidBottom)
+      ..quadraticBezierTo(lidRight + 1, lidTop + (lidBottom - lidTop) * 0.25,
+          lidRight, lidBottom)
       ..close();
 
     final Paint lidPaint = Paint()
@@ -580,7 +622,10 @@ class ChestPainter extends CustomPainter {
     if (multiplier == 45) {
       // Crown on top
       final Paint crownPaint = Paint()
-        ..shader = const LinearGradient(colors: [Color(0xFFFFD700), Color(0xFFFF9100)]).createShader(Rect.fromLTRB(w * 0.35, lidTop - 12, w * 0.65, lidTop));
+        ..shader = const LinearGradient(colors: [
+          Color(0xFFFFD700),
+          Color(0xFFFF9100)
+        ]).createShader(Rect.fromLTRB(w * 0.35, lidTop - 12, w * 0.65, lidTop));
       final Path crownPath = Path()
         ..moveTo(w * 0.35, lidTop)
         ..lineTo(w * 0.38, lidTop - 8)
@@ -605,7 +650,8 @@ class ChestPainter extends CustomPainter {
         colors: [borderMetalColor, borderMetalColor.darken(0.45)],
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-      ).createShader(Rect.fromCenter(center: Offset(lockX, lockY), width: 18, height: 18))
+      ).createShader(
+          Rect.fromCenter(center: Offset(lockX, lockY), width: 18, height: 18))
       ..style = PaintingStyle.fill;
 
     final RRect lockBackingRRect = RRect.fromRectAndRadius(
@@ -646,7 +692,10 @@ class ChestPainter extends CustomPainter {
       // Standard Keyhole
       final Paint keyholePaint = Paint()..color = const Color(0xFF121212);
       canvas.drawCircle(Offset(lockX, lockY - 1), 2.0, keyholePaint);
-      canvas.drawRect(Rect.fromCenter(center: Offset(lockX, lockY + 2), width: 1.8, height: 3.5), keyholePaint);
+      canvas.drawRect(
+          Rect.fromCenter(
+              center: Offset(lockX, lockY + 2), width: 1.8, height: 3.5),
+          keyholePaint);
     }
 
     // ─── 5. Draw Explosive Coin Particles (Casino Phase 6) ───
@@ -654,7 +703,8 @@ class ChestPainter extends CustomPainter {
       final Paint coinOuterPaint = Paint()
         ..shader = const LinearGradient(
           colors: [Color(0xFFFFD700), Color(0xFFFFB300)],
-        ).createShader(Rect.fromCircle(center: Offset(lockX, lockY), radius: 6));
+        ).createShader(
+            Rect.fromCircle(center: Offset(lockX, lockY), radius: 6));
 
       final Paint coinInnerPaint = Paint()..color = const Color(0xFFFFF59D);
 
@@ -668,13 +718,14 @@ class ChestPainter extends CustomPainter {
         // Volumetric Casino coin
         canvas.drawCircle(Offset.zero, 4.5, coinOuterPaint);
         canvas.drawCircle(Offset.zero, 3.0, coinInnerPaint);
-        
+
         canvas.restore();
       }
     }
   }
 
-  void _drawSparkle(Canvas canvas, double cx, double cy, double r, Paint paint) {
+  void _drawSparkle(
+      Canvas canvas, double cx, double cy, double r, Paint paint) {
     if (r <= 0) return;
     final Path path = Path()
       ..moveTo(cx, cy - r)
@@ -686,18 +737,22 @@ class ChestPainter extends CustomPainter {
     canvas.drawPath(path, paint);
   }
 
-  void _drawHeart(Canvas canvas, double cx, double cy, double size, Paint paint) {
+  void _drawHeart(
+      Canvas canvas, double cx, double cy, double size, Paint paint) {
     final Path path = Path();
     path.moveTo(cx, cy + size * 0.3);
-    path.cubicTo(cx - size * 0.5, cy - size * 0.3, cx - size, cy + size * 0.2, cx, cy + size);
-    path.cubicTo(cx + size, cy + size * 0.2, cx + size * 0.5, cy - size * 0.3, cx, cy + size * 0.3);
+    path.cubicTo(cx - size * 0.5, cy - size * 0.3, cx - size, cy + size * 0.2,
+        cx, cy + size);
+    path.cubicTo(cx + size, cy + size * 0.2, cx + size * 0.5, cy - size * 0.3,
+        cx, cy + size * 0.3);
     canvas.drawPath(path, paint);
   }
 
-  Path _createStarPath(double cx, double cy, double outerRadius, double innerRadius) {
+  Path _createStarPath(
+      double cx, double cy, double outerRadius, double innerRadius) {
     final Path path = Path();
     double angle = -pi / 2;
-    final double step = pi / 5;
+    const double step = pi / 5;
 
     for (int i = 0; i < 10; i++) {
       final double r = i.isEven ? outerRadius : innerRadius;
@@ -733,3 +788,4 @@ extension ColorDarken on Color {
     return hsvDark.toColor();
   }
 }
+

@@ -74,7 +74,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       final wallet = Provider.of<WalletProvider>(context, listen: false);
       if (auth.token != null) {
         wallet.fetchProfile(auth.token!);
-        wallet.fetchRankings(auth.token!, "winners", "daily");
+        wallet.fetchRankings(auth.token!);
       }
     });
   }
@@ -330,7 +330,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                               decoration: BoxDecoration(
                                 color: Colors.black38,
                                 borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: timerColor.withOpacity(0.3)),
+                                border: Border.all(color: timerColor.withValues(alpha:0.3)),
                               ),
                               child: Text(
                                 "العد التنازلي: ${remainingSecs}s",
@@ -507,7 +507,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                     ),
                     boxShadow: isHighlight ? [
                       BoxShadow(
-                        color: const Color(0xFF00E5FF).withOpacity(0.6),
+                        color: const Color(0xFF00E5FF).withValues(alpha:0.6),
                         blurRadius: 10,
                         spreadRadius: 1,
                       )
@@ -584,7 +584,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                     ),
                     boxShadow: isHighlight ? [
                       BoxShadow(
-                        color: const Color(0xFF00E5FF).withOpacity(0.6),
+                        color: const Color(0xFF00E5FF).withValues(alpha:0.6),
                         blurRadius: 10,
                         spreadRadius: 1,
                       )
@@ -700,7 +700,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: isSelected ? Colors.white.withOpacity(0.08) : Colors.transparent,
+              color: isSelected ? Colors.white.withValues(alpha:0.08) : Colors.transparent,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: isSelected ? Colors.amber : Colors.transparent, width: 1.5),
             ),
@@ -763,7 +763,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.amber.withOpacity(0.2),
+                      color: Colors.amber.withValues(alpha:0.2),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: Colors.amber, width: 1),
                     ),
@@ -832,7 +832,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                             child: ListTile(
                               leading: CircleAvatar(
-                                backgroundColor: Colors.amber.withOpacity(0.2),
+                                backgroundColor: Colors.amber.withValues(alpha:0.2),
                                 child: Text("#${idx + 1}", style: const TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
                               ),
                               title: Text(user['username'] ?? "لاعب", style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
@@ -885,7 +885,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
     return Positioned.fill(
       child: Container(
-        color: Colors.black.withOpacity(0.7),
+        color: Colors.black.withValues(alpha:0.7),
         child: Center(
           child: Container(
             width: MediaQuery.of(context).size.width * 0.85,
@@ -896,7 +896,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
               border: Border.all(color: const Color(0xFF00E5FF), width: 2),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF00E5FF).withOpacity(0.3),
+                  color: const Color(0xFF00E5FF).withValues(alpha:0.3),
                   blurRadius: 20,
                   spreadRadius: 2,
                 )
@@ -996,7 +996,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                         decoration: BoxDecoration(
                           color: const Color(0xFF241554),
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: Colors.greenAccent.withOpacity(0.3)),
+                          border: Border.all(color: Colors.greenAccent.withValues(alpha:0.3)),
                         ),
                         child: Column(
                           children: [
@@ -1110,7 +1110,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
     return Positioned.fill(
       child: Container(
-        color: Colors.black.withOpacity(0.7),
+        color: Colors.black.withValues(alpha:0.7),
         child: Center(
           child: Container(
             width: MediaQuery.of(context).size.width * 0.85,
@@ -1121,7 +1121,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
               border: Border.all(color: const Color(0xFFE040FB), width: 2), // Pink border for history details
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFE040FB).withOpacity(0.3),
+                  color: const Color(0xFFE040FB).withValues(alpha:0.3),
                   blurRadius: 20,
                   spreadRadius: 2,
                 )
@@ -1177,6 +1177,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                         totalBets: "",
                         isHot: false,
                         openProgress: 1.0,
+                        gameStatus: "REVEALING",
                       ),
                     ],
                   ),
@@ -1258,3 +1259,4 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     );
   }
 }
+

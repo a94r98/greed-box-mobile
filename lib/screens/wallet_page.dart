@@ -73,7 +73,8 @@ class _WalletPageState extends State<WalletPage> {
     final success = await wallet.requestWithdrawal(auth.token!, amount);
     if (success && mounted) {
       _amountController.clear();
-      _showMessage("تم إرسال طلب السحب بنجاح! سيتم فحص العملية من قبل المشرفين.");
+      _showMessage(
+          "تم إرسال طلب السحب بنجاح! سيتم فحص العملية من قبل المشرفين.");
       wallet.fetchBetHistory(auth.token!);
     } else {
       _showMessage("فشل إرسال طلب السحب.");
@@ -85,7 +86,8 @@ class _WalletPageState extends State<WalletPage> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text("حساب زائر"),
-        content: const Text("يرجى ترقية حسابك وربط بريدك الإلكتروني لتتمكن من الشحن والسحب."),
+        content: const Text(
+            "يرجى ترقية حسابك وربط بريدك الإلكتروني لتتمكن من الشحن والسحب."),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -108,7 +110,8 @@ class _WalletPageState extends State<WalletPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("محفظتي وعملياتي", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text("محفظتي وعملياتي",
+            style: TextStyle(fontWeight: FontWeight.bold)),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -124,11 +127,16 @@ class _WalletPageState extends State<WalletPage> {
                     Expanded(
                       child: Column(
                         children: [
-                          const Text("عملات مجانية", style: TextStyle(color: Colors.grey, fontSize: 13)),
+                          const Text("عملات مجانية",
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: 13)),
                           const SizedBox(height: 6),
                           Text(
                             wallet.freeBalance.toStringAsFixed(1),
-                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFFFFB703)),
+                            style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFFFFB703)),
                           ),
                         ],
                       ),
@@ -140,11 +148,16 @@ class _WalletPageState extends State<WalletPage> {
                     Expanded(
                       child: Column(
                         children: [
-                          const Text("عملات شحن", style: TextStyle(color: Colors.grey, fontSize: 13)),
+                          const Text("عملات شحن",
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: 13)),
                           const SizedBox(height: 6),
                           Text(
                             wallet.cashBalance.toStringAsFixed(2),
-                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF06D6A0)),
+                            style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF06D6A0)),
                           ),
                         ],
                       ),
@@ -162,7 +175,9 @@ class _WalletPageState extends State<WalletPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Text("تقديم طلب مالي", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                    const Text("تقديم طلب مالي",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16)),
                     const SizedBox(height: 12),
                     TextField(
                       controller: _amountController,
@@ -178,7 +193,9 @@ class _WalletPageState extends State<WalletPage> {
                         Expanded(
                           child: ElevatedButton(
                             onPressed: _submitDeposit,
-                            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF06D6A0), foregroundColor: Colors.black),
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF06D6A0),
+                                foregroundColor: Colors.black),
                             child: const Text("شحن رصيد"),
                           ),
                         ),
@@ -186,7 +203,9 @@ class _WalletPageState extends State<WalletPage> {
                         Expanded(
                           child: ElevatedButton(
                             onPressed: _submitWithdrawal,
-                            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFF5E62), foregroundColor: Colors.white),
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFFF5E62),
+                                foregroundColor: Colors.white),
                             child: const Text("سحب رصيد"),
                           ),
                         ),
@@ -199,34 +218,39 @@ class _WalletPageState extends State<WalletPage> {
             const SizedBox(height: 20),
 
             // My history logs list
-            const Text("سجل المراهنات السابقة", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            const Text("سجل المراهنات السابقة",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             const SizedBox(height: 12),
-            
+
             ...wallet.betHistory.map((bet) {
               final isWin = bet['status'] == "WON";
               return Card(
                 child: ListTile(
-                  title: Text("رهان صندوق ${bet['boxIndex']} (x${bet['winningMultiplier'] ?? '0'})"),
+                  title: Text(
+                      "رهان صندوق ${bet['boxIndex']} (x${bet['winningMultiplier'] ?? '0'})"),
                   subtitle: Text(
                     "${bet['amount']} ${bet['currency'] == 'FREE' ? 'مجاني' : 'شحن'} • ${isWin ? 'ربح' : 'خسارة'}",
-                    style: TextStyle(color: isWin ? Colors.green : Colors.grey, fontSize: 13),
+                    style: TextStyle(
+                        color: isWin ? Colors.green : Colors.grey,
+                        fontSize: 13),
                   ),
                   trailing: Text(
                     isWin ? "+${bet['winAmount']}" : "0.0",
                     style: TextStyle(
-                      fontWeight: FontWeight.bold, 
-                      color: isWin ? Colors.green : Colors.redAccent,
-                      fontSize: 16
-                    ),
+                        fontWeight: FontWeight.bold,
+                        color: isWin ? Colors.green : Colors.redAccent,
+                        fontSize: 16),
                   ),
                 ),
               );
             }),
-            
+
             if (wallet.betHistory.isEmpty)
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 24.0),
-                child: Text("لا توجد جولات سابقة مسجلة.", style: TextStyle(color: Colors.grey), textAlign: SystemMouseCursors.click == null ? TextAlign.center : TextAlign.center),
+                child: Text("لا توجد جولات سابقة مسجلة.",
+                    style: TextStyle(color: Colors.grey),
+                    textAlign: TextAlign.center),
               ),
           ],
         ),

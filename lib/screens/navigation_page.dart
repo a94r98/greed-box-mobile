@@ -40,7 +40,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
           // Maintenance Mode overlay blocking interactions
           if (game.maintenanceMessage != null)
             Container(
-              color: Colors.black.withOpacity(0.92),
+              color: Colors.black.withValues(alpha:0.92),
               width: double.infinity,
               height: double.infinity,
               child: Padding(
@@ -102,3 +102,4 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
     );
   }
 }
+

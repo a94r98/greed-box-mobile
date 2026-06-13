@@ -11,6 +11,7 @@ class WalletProvider extends ChangeNotifier {
   List<Map<String, dynamic>> _betHistory = [];
   List<Map<String, dynamic>> _tasks = [];
   List<Map<String, dynamic>> _rankings = [];
+  Map<String, dynamic>? _myRankInfo;
   
   Map<String, dynamic>? _profileStats;
   bool _isLoading = false;
@@ -20,6 +21,7 @@ class WalletProvider extends ChangeNotifier {
   List<Map<String, dynamic>> get betHistory => _betHistory;
   List<Map<String, dynamic>> get tasks => _tasks;
   List<Map<String, dynamic>> get rankings => _rankings;
+  Map<String, dynamic>? get myRankInfo => _myRankInfo;
   Map<String, dynamic>? get profileStats => _profileStats;
   bool get isLoading => _isLoading;
 
@@ -139,19 +141,64 @@ class WalletProvider extends ChangeNotifier {
     return false;
   }
 
+  // Report custom task action (e.g. social clicks, reviews)
+  Future<bool> reportAction(String token, String actionType) async {
+    try {
+      final res = await http.post(
+        Uri.parse("$apiBase/player/tasks/action"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token"
+        },
+        body: jsonEncode({"actionType": actionType})
+      );
+      if (res.statusCode == 200) {
+        await fetchTasks(token);
+        return true;
+      }
+    } catch (e) {
+      debugPrint("[WalletProvider] Report action error: $e");
+    }
+    return false;
+  }
+
+  // Send periodic online minutes heartbeat tick
+  Future<void> sendHeartbeat(String token) async {
+    try {
+      final res = await http.post(
+        Uri.parse("$apiBase/player/tasks/heartbeat"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token"
+        }
+      );
+      if (res.statusCode == 200) {
+        await fetchTasks(token);
+      }
+    } catch (e) {
+      debugPrint("[WalletProvider] Heartbeat tick error: $e");
+    }
+  }
+
   // Fetch Leaderboard rankings
-  Future<void> fetchRankings(String token, String category, String timeframe) async {
+  Future<void> fetchRankings(String token) async {
+    _isLoading = true;
+    notifyListeners();
     try {
       final res = await http.get(
-        Uri.parse("$apiBase/player/rankings?category=$category&timeframe=$timeframe"),
+        Uri.parse("$apiBase/player/rankings"),
         headers: {"Authorization": "Bearer $token"}
       );
       if (res.statusCode == 200) {
-        _rankings = List<Map<String, dynamic>>.from(jsonDecode(res.body)['rankings']);
-        notifyListeners();
+        final data = jsonDecode(res.body);
+        _rankings = List<Map<String, dynamic>>.from(data['rankings']);
+        _myRankInfo = data['myRank'] != null ? Map<String, dynamic>.from(data['myRank']) : null;
       }
     } catch (e) {
       debugPrint("[WalletProvider] Rankings error: $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
