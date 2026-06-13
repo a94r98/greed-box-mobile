@@ -139,7 +139,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
     _updateScanAnimation(game.status);
 
-    if (game.status == "REVEALING" && game.winningBox != null && !_isAnimatingReveal) {
+    if (game.status == "FINALIZING" && game.winningBox != null && !_isAnimatingReveal) {
       _isAnimatingReveal = true;
       _revealedWinningBox = game.winningBox;
       _runRevealSequence(game, wallet, auth);
@@ -846,202 +846,216 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         ];
 
     return Positioned.fill(
-      child: Container(
-        color: Colors.black.withValues(alpha:0.7),
-        child: Center(
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.85,
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: const Color(0xFF1B0F42),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: const Color(0xFF00E5FF), width: 2),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF00E5FF).withValues(alpha:0.3),
-                  blurRadius: 20,
-                  spreadRadius: 2,
-                )
-              ]
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Header with wings and title
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.close, color: Colors.white70),
-                      onPressed: () {
-                        setState(() {
-                          _closedResultsManually = true;
-                        });
-                      },
-                    ),
-                    const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.star_rounded, color: Colors.amber, size: 20),
-                        SizedBox(width: 4),
-                        Text(
-                          "نتائج الجولة",
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.white,
-                            letterSpacing: 1.2,
-                          ),
-                        ),
-                        SizedBox(width: 4),
-                        Icon(Icons.star_rounded, color: Colors.amber, size: 20),
-                      ],
-                    ),
-                    const SizedBox(width: 48), // Spacer to balance close button
-                  ],
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0.0, end: 1.0),
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOutCubic,
+        builder: (context, value, child) {
+          return Container(
+            color: Colors.black.withValues(alpha: 0.7 * value),
+            child: Center(
+              child: Transform.scale(
+                scale: 0.9 + (value * 0.1),
+                child: Opacity(
+                  opacity: value,
+                  child: child,
                 ),
-                const SizedBox(height: 16),
-
-                // Winning Box Representation
-                Center(
-                  child: Column(
+              ),
+            ),
+          );
+        },
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.85,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: const Color(0xFF1B0F42),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: const Color(0xFF00E5FF), width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF00E5FF).withValues(alpha:0.3),
+                blurRadius: 20,
+                spreadRadius: 2,
+              )
+            ]
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Header with wings and title
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white70),
+                    onPressed: () {
+                      setState(() {
+                        _closedResultsManually = true;
+                      });
+                    },
+                  ),
+                  const Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      ChestWidget(
-                        color: boxColor,
-                        multiplierLabel: label,
-                        multiplierValue: multVal,
-                        isSelected: false,
-                        isWinner: true,
-                        userBetAmount: 0,
-                        totalBets: "",
-                        isHot: false,
-                        gameStatus: game.status,
-                        openProgress: 1.0,
+                      Icon(Icons.star_rounded, color: Colors.amber, size: 20),
+                      SizedBox(width: 4),
+                      Text(
+                        "نتائج الجولة",
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                          letterSpacing: 1.2,
+                        ),
                       ),
+                      SizedBox(width: 4),
+                      Icon(Icons.star_rounded, color: Colors.amber, size: 20),
                     ],
                   ),
-                ),
-                const SizedBox(height: 20),
+                  const SizedBox(width: 48), // Spacer to balance close button
+                ],
+              ),
+              const SizedBox(height: 42),
 
-                // Player Bet & Win stats
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              // Winning Box Representation
+              Center(
+                child: Column(
                   children: [
-                    // Bet Card
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        margin: const EdgeInsets.symmetric(horizontal: 6),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF241554),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: Colors.white12),
-                        ),
-                        child: Column(
-                          children: [
-                            const Text("راهنت", style: TextStyle(color: Colors.white70, fontSize: 13)),
-                            const SizedBox(height: 4),
-                            Text(
-                              "${totalMyBets.toStringAsFixed(0)} $currencySymbol",
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.amber),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    // Win Card
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        margin: const EdgeInsets.symmetric(horizontal: 6),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF241554),
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: Colors.greenAccent.withValues(alpha:0.3)),
-                        ),
-                        child: Column(
-                          children: [
-                            const Text("فزت", style: TextStyle(color: Colors.white70, fontSize: 13)),
-                            const SizedBox(height: 4),
-                            Text(
-                              "${winReward.toStringAsFixed(0)} $currencySymbol",
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.greenAccent),
-                            ),
-                          ],
-                        ),
-                      ),
+                    ChestWidget(
+                      color: boxColor,
+                      multiplierLabel: label,
+                      multiplierValue: multVal,
+                      isSelected: false,
+                      isWinner: true,
+                      userBetAmount: 0,
+                      totalBets: "",
+                      isHot: false,
+                      gameStatus: game.status,
+                      openProgress: 1.0,
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+              ),
+              const SizedBox(height: 20),
 
-                // Top Winners section
-                const Text(
-                  "أكبر الفائزين في هذه الجولة",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white70),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 12),
-                
-                // 3 Winners row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: List.generate(winners.length, (idx) {
-                    final winner = winners[idx];
-                    final String name = winner['username'] ?? "لاعب";
-                    final double amount = (winner['winAmount'] as num).toDouble();
-                    
-                    // Crown and medal coloring
-                    Color medalColor = Colors.amber;
-                    if (idx == 1) medalColor = Colors.grey;
-                    if (idx == 2) medalColor = Colors.brown;
-
-                    return Expanded(
+              // Player Bet & Win stats
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  // Bet Card
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      margin: const EdgeInsets.symmetric(horizontal: 6),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF241554),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.white12),
+                      ),
                       child: Column(
                         children: [
-                          Stack(
-                            alignment: Alignment.topCenter,
-                            children: [
-                              Container(
-                                margin: const EdgeInsets.only(top: 8),
-                                padding: const EdgeInsets.all(3),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(color: medalColor, width: 2),
-                                ),
-                                child: CircleAvatar(
-                                  radius: 20,
-                                  backgroundColor: Colors.white12,
-                                  child: Icon(Icons.person, color: medalColor, size: 20),
-                                ),
-                              ),
-                              Positioned(
-                                top: 0,
-                                child: Icon(Icons.emoji_events_rounded, color: medalColor, size: 14),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 6),
+                          const Text("راهنت", style: TextStyle(color: Colors.white70, fontSize: 13)),
+                          const SizedBox(height: 4),
                           Text(
-                            name,
-                            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            "${amount.toStringAsFixed(0)} $currencySymbol",
-                            style: const TextStyle(fontSize: 10, color: Colors.amberAccent),
-                            maxLines: 1,
+                            "${totalMyBets.toStringAsFixed(0)} $currencySymbol",
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.amber),
                           ),
                         ],
                       ),
-                    );
-                  }),
-                ),
-              ],
-            ),
+                    ),
+                  ),
+                  // Win Card
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      margin: const EdgeInsets.symmetric(horizontal: 6),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF241554),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.greenAccent.withValues(alpha:0.3)),
+                      ),
+                      child: Column(
+                        children: [
+                          const Text("فزت", style: TextStyle(color: Colors.white70, fontSize: 13)),
+                          const SizedBox(height: 4),
+                          Text(
+                            "${winReward.toStringAsFixed(0)} $currencySymbol",
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.greenAccent),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+
+              // Top Winners section
+              const Text(
+                "أكبر الفائزين في هذه الجولة",
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white70),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              
+              // 3 Winners row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: List.generate(winners.length, (idx) {
+                  final winner = winners[idx];
+                  final String name = winner['username'] ?? "لاعب";
+                  final double amount = (winner['winAmount'] as num).toDouble();
+                  
+                  // Crown and medal coloring
+                  Color medalColor = Colors.amber;
+                  if (idx == 1) medalColor = Colors.grey;
+                  if (idx == 2) medalColor = Colors.brown;
+
+                  return Expanded(
+                    child: Column(
+                      children: [
+                        Stack(
+                          alignment: Alignment.topCenter,
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(top: 8),
+                              padding: const EdgeInsets.all(3),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(color: medalColor, width: 2),
+                              ),
+                              child: CircleAvatar(
+                                radius: 20,
+                                backgroundColor: Colors.white12,
+                                child: Icon(Icons.person, color: medalColor, size: 20),
+                              ),
+                            ),
+                            Positioned(
+                              top: 0,
+                              child: Icon(Icons.emoji_events_rounded, color: medalColor, size: 14),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          name,
+                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          "${amount.toStringAsFixed(0)} $currencySymbol",
+                          style: const TextStyle(fontSize: 10, color: Colors.amberAccent),
+                          maxLines: 1,
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+              ),
+            ],
           ),
         ),
       ),
@@ -1071,150 +1085,164 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     final currencySymbol = _betCurrency == "FREE" ? "🪙" : "💵";
 
     return Positioned.fill(
-      child: Container(
-        color: Colors.black.withValues(alpha:0.7),
-        child: Center(
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.85,
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: const Color(0xFF1B0F42),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: const Color(0xFFE040FB), width: 2), // Pink border for history details
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFFE040FB).withValues(alpha:0.3),
-                  blurRadius: 20,
-                  spreadRadius: 2,
-                )
-              ]
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Header with wings and title
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.close, color: Colors.white70),
-                      onPressed: () {
-                        setState(() {
-                          _historyRoundDetails = null;
-                        });
-                      },
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.history_rounded, color: Colors.amber, size: 20),
-                        const SizedBox(width: 4),
-                        Text(
-                          "نتائج الجولة $sequenceNumber",
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(width: 48),
-                  ],
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0.0, end: 1.0),
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOutCubic,
+        builder: (context, value, child) {
+          return Container(
+            color: Colors.black.withValues(alpha: 0.7 * value),
+            child: Center(
+              child: Transform.scale(
+                scale: 0.9 + (value * 0.1),
+                child: Opacity(
+                  opacity: value,
+                  child: child,
                 ),
-                const SizedBox(height: 16),
-
-                // Winning Box Representation
-                Center(
-                  child: Column(
+              ),
+            ),
+          );
+        },
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.85,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: const Color(0xFF1B0F42),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: const Color(0xFFE040FB), width: 2), // Pink border for history details
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFFE040FB).withValues(alpha:0.3),
+                blurRadius: 20,
+                spreadRadius: 2,
+              )
+            ]
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Header with wings and title
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white70),
+                    onPressed: () {
+                      setState(() {
+                        _historyRoundDetails = null;
+                      });
+                    },
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      ChestWidget(
-                        color: boxColor,
-                        multiplierLabel: label,
-                        multiplierValue: multVal,
-                        isSelected: false,
-                        isWinner: true,
-                        userBetAmount: 0,
-                        totalBets: "",
-                        isHot: false,
-                        openProgress: 1.0,
-                        gameStatus: "REVEALING",
+                      const Icon(Icons.history_rounded, color: Colors.amber, size: 20),
+                      const SizedBox(width: 4),
+                      Text(
+                        "نتائج الجولة $sequenceNumber",
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                        ),
                       ),
                     ],
                   ),
-                ),
-                const SizedBox(height: 20),
+                  const SizedBox(width: 48),
+                ],
+              ),
+              const SizedBox(height: 42),
 
-                // Top Winners section
-                const Text(
-                  "أكبر الفائزين في هذه الجولة",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white70),
-                  textAlign: TextAlign.center,
+              // Winning Box Representation
+              Center(
+                child: Column(
+                  children: [
+                    ChestWidget(
+                      color: boxColor,
+                      multiplierLabel: label,
+                      multiplierValue: multVal,
+                      isSelected: false,
+                      isWinner: true,
+                      userBetAmount: 0,
+                      totalBets: "",
+                      isHot: false,
+                      openProgress: 1.0,
+                      gameStatus: "REVEALING",
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 12),
-                
-                // 3 Winners row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: winners.isEmpty
-                    ? [
-                        const Text("لا يوجد فائزين في هذه الجولة", style: TextStyle(color: Colors.white38, fontSize: 13))
-                      ]
-                    : List.generate(winners.length, (idx) {
-                        final winner = winners[idx];
-                        final String name = winner['username'] ?? "لاعب";
-                        final double amount = (winner['winAmount'] as num).toDouble();
-                        
-                        Color medalColor = Colors.amber;
-                        if (idx == 1) medalColor = Colors.grey;
-                        if (idx == 2) medalColor = Colors.brown;
+              ),
+              const SizedBox(height: 20),
 
-                        return Expanded(
-                          child: Column(
-                            children: [
-                              Stack(
-                                alignment: Alignment.topCenter,
-                                children: [
-                                  Container(
-                                    margin: const EdgeInsets.only(top: 8),
-                                    padding: const EdgeInsets.all(3),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(color: medalColor, width: 2),
-                                    ),
-                                    child: CircleAvatar(
-                                      radius: 20,
-                                      backgroundColor: Colors.white12,
-                                      child: Icon(Icons.person, color: medalColor, size: 20),
-                                    ),
+              // Top Winners section
+              const Text(
+                "أكبر الفائزين في هذه الجولة",
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white70),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              
+              // 3 Winners row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: winners.isEmpty
+                  ? [
+                      const Text("لا يوجد فائزين في هذه الجولة", style: TextStyle(color: Colors.white38, fontSize: 13))
+                    ]
+                  : List.generate(winners.length, (idx) {
+                      final winner = winners[idx];
+                      final String name = winner['username'] ?? "لاعب";
+                      final double amount = (winner['winAmount'] as num).toDouble();
+                      
+                      Color medalColor = Colors.amber;
+                      if (idx == 1) medalColor = Colors.grey;
+                      if (idx == 2) medalColor = Colors.brown;
+
+                      return Expanded(
+                        child: Column(
+                          children: [
+                            Stack(
+                              alignment: Alignment.topCenter,
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.only(top: 8),
+                                  padding: const EdgeInsets.all(3),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(color: medalColor, width: 2),
                                   ),
-                                  Positioned(
-                                    top: 0,
-                                    child: Icon(Icons.emoji_events_rounded, color: medalColor, size: 14),
+                                  child: CircleAvatar(
+                                    radius: 20,
+                                    backgroundColor: Colors.white12,
+                                    child: Icon(Icons.person, color: medalColor, size: 20),
                                   ),
-                                ],
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                name,
-                                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                "${amount.toStringAsFixed(0)} $currencySymbol",
-                                style: const TextStyle(fontSize: 10, color: Colors.amberAccent),
-                                maxLines: 1,
-                              ),
-                            ],
-                          ),
-                        );
-                      }),
-                ),
-              ],
-            ),
+                                ),
+                                Positioned(
+                                  top: 0,
+                                  child: Icon(Icons.emoji_events_rounded, color: medalColor, size: 14),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              name,
+                              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              "${amount.toStringAsFixed(0)} $currencySymbol",
+                              style: const TextStyle(fontSize: 10, color: Colors.amberAccent),
+                              maxLines: 1,
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+              ),
+            ],
           ),
         ),
       ),

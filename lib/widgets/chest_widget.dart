@@ -79,6 +79,11 @@ class _ChestWidgetState extends State<ChestWidget>
       }
       setState(() {});
     });
+
+    if (widget.openProgress > 0) {
+      _openController.animateTo(widget.openProgress,
+          duration: const Duration(milliseconds: 300));
+    }
   }
 
   @override
