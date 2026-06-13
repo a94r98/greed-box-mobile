@@ -66,7 +66,7 @@ class _WalletPageState extends State<WalletPage> {
     }
 
     if (wallet.cashBalance < amount) {
-      _showMessage("رصيد الشحن غير كافٍ لإجراء السحب.");
+      _showMessage("رصيد الكونزات غير كافٍ لإجراء السحب.");
       return;
     }
 
@@ -127,9 +127,15 @@ class _WalletPageState extends State<WalletPage> {
                     Expanded(
                       child: Column(
                         children: [
-                          const Text("عملات مجانية",
-                              style:
-                                  TextStyle(color: Colors.grey, fontSize: 13)),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset('assets/diamond.png', width: 16, height: 16),
+                              const SizedBox(width: 4),
+                              const Text("الماسات",
+                                  style: TextStyle(color: Colors.grey, fontSize: 13)),
+                            ],
+                          ),
                           const SizedBox(height: 6),
                           Text(
                             wallet.freeBalance.toStringAsFixed(1),
@@ -148,9 +154,15 @@ class _WalletPageState extends State<WalletPage> {
                     Expanded(
                       child: Column(
                         children: [
-                          const Text("عملات شحن",
-                              style:
-                                  TextStyle(color: Colors.grey, fontSize: 13)),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset('assets/coin.png', width: 16, height: 16),
+                              const SizedBox(width: 4),
+                              const Text("الكونزات",
+                                  style: TextStyle(color: Colors.grey, fontSize: 13)),
+                            ],
+                          ),
                           const SizedBox(height: 6),
                           Text(
                             wallet.cashBalance.toStringAsFixed(2),
@@ -183,7 +195,7 @@ class _WalletPageState extends State<WalletPage> {
                       controller: _amountController,
                       keyboardType: TextInputType.number,
                       decoration: const InputDecoration(
-                        labelText: "قيمة المبلغ (عملة شحن)",
+                        labelText: "قيمة المبلغ (بالكونزات)",
                         border: OutlineInputBorder(),
                       ),
                     ),
@@ -229,7 +241,7 @@ class _WalletPageState extends State<WalletPage> {
                   title: Text(
                       "رهان صندوق ${bet['boxIndex']} (x${bet['winningMultiplier'] ?? '0'})"),
                   subtitle: Text(
-                    "${bet['amount']} ${bet['currency'] == 'FREE' ? 'مجاني' : 'شحن'} • ${isWin ? 'ربح' : 'خسارة'}",
+                    "${bet['amount']} ${bet['currency'] == 'FREE' ? 'ماسات' : 'كونزات'} • ${isWin ? 'ربح' : 'خسارة'}",
                     style: TextStyle(
                         color: isWin ? Colors.green : Colors.grey,
                         fontSize: 13),

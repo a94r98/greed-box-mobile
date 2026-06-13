@@ -38,3 +38,4 @@ flutter:
   assets:
     - assets/frames/
     - assets/diamond.png
+    - assets/coin.png

@@ -623,7 +623,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         _buildCurrencyTab(
-          label: "العملات المجانية",
+          label: "الماسات",
+          icon: Image.asset('assets/diamond.png', width: 16, height: 16),
           isActive: _betCurrency == "FREE",
           disabled: isCashLocked,
           onTap: () {
@@ -634,6 +635,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         const SizedBox(width: 12),
         _buildCurrencyTab(
           label: "الكونز المدفوع",
+          icon: Image.asset('assets/coin.png', width: 16, height: 16),
           isActive: _betCurrency == "CASH",
           disabled: isFreeLocked,
           onTap: () {
@@ -645,7 +647,13 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildCurrencyTab({required String label, required bool isActive, required bool disabled, required VoidCallback onTap}) {
+  Widget _buildCurrencyTab({
+    required String label,
+    required bool isActive,
+    required bool disabled,
+    required VoidCallback onTap,
+    Widget? icon,
+  }) {
     return IgnorePointer(
       ignoring: disabled,
       child: Opacity(
@@ -660,13 +668,22 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: isActive ? Colors.amber : Colors.white24),
             ),
-            child: Text(
-              label,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 13,
-                color: isActive ? Colors.black : Colors.white70,
-              ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (icon != null) ...[
+                  icon,
+                  const SizedBox(width: 6),
+                ],
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                    color: isActive ? Colors.black : Colors.white70,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -723,7 +740,6 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   // Bottom static bar showing balances
   Widget _buildBottomLedger(WalletProvider wallet) {
     final double balance = _betCurrency == "FREE" ? wallet.freeBalance : wallet.cashBalance;
-    final currencySymbol = _betCurrency == "FREE" ? "🪙" : "💵";
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -740,8 +756,10 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             Row(
               children: [
                 Text("رصيدك: ${balance.toStringAsFixed(0)}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white)),
-                const SizedBox(width: 4),
-                Text(currencySymbol, style: const TextStyle(fontSize: 14)),
+                const SizedBox(width: 6),
+                _betCurrency == "FREE"
+                    ? Image.asset('assets/diamond.png', width: 16, height: 16)
+                    : Image.asset('assets/coin.png', width: 16, height: 16),
                 const SizedBox(width: 8),
                 InkWell(
                   onTap: () async {
@@ -752,7 +770,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                       if (success && mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text("تم إضافة +${amount.toStringAsFixed(0)} عملة بنجاح للاختبار!"),
+                            content: Text("تم إضافة +${amount.toStringAsFixed(0)} ${_betCurrency == 'FREE' ? 'ماسة' : 'كونز'} بنجاح للاختبار!"),
                             backgroundColor: Colors.green,
                             duration: const Duration(seconds: 2),
                           ),

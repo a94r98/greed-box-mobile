@@ -138,7 +138,7 @@ class _TasksPageState extends State<TasksPage> with SingleTickerProviderStateMix
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.diamond_outlined, color: Color(0xFFFFB703), size: 14),
+                      Image.asset('assets/diamond.png', width: 14, height: 14),
                       const SizedBox(width: 4),
                       Text(
                         "+${task['rewardAmount']}",
@@ -345,9 +345,19 @@ class _TasksPageState extends State<TasksPage> with SingleTickerProviderStateMix
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                "المكافأة: ${completeAllTask['rewardAmount']} ماسة 💎",
-                                style: const TextStyle(color: Color(0xFFFFB703), fontWeight: FontWeight.bold, fontSize: 13),
+                              Row(
+                                children: [
+                                  const Text(
+                                    "المكافأة: ",
+                                    style: TextStyle(color: Color(0xFFFFB703), fontWeight: FontWeight.bold, fontSize: 13),
+                                  ),
+                                  Text(
+                                    "${completeAllTask['rewardAmount']}",
+                                    style: const TextStyle(color: Color(0xFFFFB703), fontWeight: FontWeight.bold, fontSize: 13),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Image.asset('assets/diamond.png', width: 14, height: 14),
+                                ],
                               ),
                               Text(
                                 "$completedDailyCount / $totalDailyCount مهام منجزة",
@@ -375,7 +385,13 @@ class _TasksPageState extends State<TasksPage> with SingleTickerProviderStateMix
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                 padding: const EdgeInsets.symmetric(vertical: 12),
                               ),
-                              child: const Text("افتح الصندوق واستلم 5,000 ماسة! 💎", style: TextStyle(fontWeight: FontWeight.bold)),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Text("افتح الصندوق واستلم 5,000 ماسة! ", style: TextStyle(fontWeight: FontWeight.bold)),
+                                  Image.asset('assets/diamond.png', width: 16, height: 16),
+                                ],
+                              ),
                             )
                           else if (chestClaimed)
                             OutlinedButton(
