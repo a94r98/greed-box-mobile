@@ -264,24 +264,6 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.help_outline_rounded, color: Colors.white70),
-            onPressed: () {},
-          ),
-          title: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.black26,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text("جولة: ${game.sequenceNumber}", style: const TextStyle(fontSize: 14, color: Colors.amber)),
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.emoji_events_rounded, color: Colors.amber),
-              onPressed: () => _scaffoldKey.currentState?.openEndDrawer(),
-            ),
-          ],
         ),
         endDrawer: _buildWinnersDrawer(wallet),
         body: Stack(
@@ -634,7 +616,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         ),
         const SizedBox(width: 12),
         _buildCurrencyTab(
-          label: "الكونز المدفوع",
+          label: "الكونزات",
           icon: Image.asset('assets/coin.png', width: 16, height: 16),
           isActive: _betCurrency == "CASH",
           disabled: isFreeLocked,
@@ -760,44 +742,6 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 _betCurrency == "FREE"
                     ? Image.asset('assets/diamond.png', width: 16, height: 16)
                     : Image.asset('assets/coin.png', width: 16, height: 16),
-                const SizedBox(width: 8),
-                InkWell(
-                  onTap: () async {
-                    final auth = Provider.of<AuthProvider>(context, listen: false);
-                    if (auth.token != null) {
-                      final amount = _betCurrency == "FREE" ? 100000.0 : 10000.0;
-                      final success = await wallet.requestTestRefill(auth.token!, amount, _betCurrency);
-                      if (success && mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("تم إضافة +${amount.toStringAsFixed(0)} ${_betCurrency == 'FREE' ? 'ماسة' : 'كونز'} بنجاح للاختبار!"),
-                            backgroundColor: Colors.green,
-                            duration: const Duration(seconds: 2),
-                          ),
-                        );
-                      }
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.amber.withValues(alpha:0.2),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.amber, width: 1),
-                    ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.add_circle_outline, size: 14, color: Colors.amber),
-                        SizedBox(width: 2),
-                        Text(
-                          "شحن تجريبي",
-                          style: TextStyle(color: Colors.amber, fontSize: 11, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
               ],
             ),
 

@@ -76,8 +76,6 @@ class _RankingsPageState extends State<RankingsPage> {
     final List<Map<String, dynamic>> remainingList = rankings.skip(3).toList();
 
     return Scaffold(
-      backgroundColor:
-          const Color(0xFF060112), // Premium Ultra Dark Purple Background
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -91,41 +89,40 @@ class _RankingsPageState extends State<RankingsPage> {
           ),
         ),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh_rounded, color: Colors.white70),
-            onPressed: _loadRankings,
-          ),
-        ],
       ),
-      body: wallet.isLoading && rankings.isEmpty
-          ? const Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFDA22FF)),
-              ),
-            )
-          : Column(
-              children: [
-                Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: () async => _loadRankings(),
-                    color: const Color(0xFFDA22FF),
-                    backgroundColor: const Color(0xFF0F0826),
-                    child: ListView(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
-                      children: [
-                        // Title Section
-                        const Text(
-                          "أقوى المراهنين بالكونزات المدفوعة 🏆",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.white70,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
+      extendBodyBehindAppBar: true,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color(0xFF0E021F), // Dark Purple
+              Color(0xFF23073E), // Purple
+              Color(0xFF4A0A3D), // Pink-Plum
+              Color(0xFF0E021F), // Dark Purple
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: SafeArea(
+          bottom: false,
+          child: wallet.isLoading && rankings.isEmpty
+              ? const Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFDA22FF)),
+                  ),
+                )
+              : Column(
+                  children: [
+                    Expanded(
+                      child: RefreshIndicator(
+                        onRefresh: () async => _loadRankings(),
+                        color: const Color(0xFFDA22FF),
+                        backgroundColor: const Color(0xFF0F0826),
+                        child: ListView(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          children: [
 
                         // Top 3 Podium
                         if (topThree.isNotEmpty) ...[
@@ -361,10 +358,12 @@ class _RankingsPageState extends State<RankingsPage> {
                       ),
                     ),
                   ),
+                  ],
                 ],
-              ],
+              ),
             ),
-    );
+          ),
+        );
   }
 
   Widget _buildListAvatar(String nickname, String gender) {
