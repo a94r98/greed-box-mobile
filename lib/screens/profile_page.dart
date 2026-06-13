@@ -100,7 +100,7 @@ class _ProfilePageState extends State<ProfilePage> {
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
     );
-    final userAge = auth.user?['age']?.toString() ?? "18+";
+    final userAge = (auth.user?['age']?.toString() ?? "18").replaceAll('+', '');
     final countryCode = auth.user?['countryCode']?.toString().toUpperCase() ??
         auth.user?['country']?['code']?.toString().toUpperCase() ??
         "SA";
@@ -173,34 +173,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // 1. Avatar (first, on the right in RTL / start in LTR)
-                        SizedBox(
-                          width: 80,
-                          height: 80,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Lottie.asset(
-                                isFemale
-                                    ? 'assets/frames/New female account.json'
-                                    : 'assets/frames/New male account.json',
-                                width: 80,
-                                height: 80,
-                                fit: BoxFit.contain,
-                                repeat: true,
-                              ),
-                              CircleAvatar(
-                                radius: 28,
-                                backgroundColor: accentColor.withValues(alpha: 0.2),
-                                child: _buildAvatarIcon(
-                                    auth.user?['avatar']?.toString(),
-                                    displayNickname),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        // 2. Details Column (second, starts right next to avatar)
+                        // 1. Details Column (now first on the right in RTL, start in LTR context)
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -217,7 +190,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   const SizedBox(width: 8),
-                                  // Age & Gender Icon
+                                  // Age Chip (Without gender icon and without + sign)
                                   Container(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 6, vertical: 3),
@@ -225,25 +198,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                       gradient: accentGradient,
                                       borderRadius: BorderRadius.circular(10),
                                     ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          isFemale
-                                              ? Icons.female_rounded
-                                              : Icons.male_rounded,
-                                          size: 11,
+                                    child: Text(
+                                      userAge,
+                                      style: const TextStyle(
                                           color: Colors.white,
-                                        ),
-                                        const SizedBox(width: 2),
-                                        Text(
-                                          userAge,
-                                          style: const TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 10),
-                                        ),
-                                      ],
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 10),
                                     ),
                                   ),
                                   const SizedBox(width: 8),
@@ -289,6 +249,33 @@ class _ProfilePageState extends State<ProfilePage> {
                                     height: 1.4),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        // 2. Avatar (now second)
+                        SizedBox(
+                          width: 80,
+                          height: 80,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Lottie.asset(
+                                isFemale
+                                    ? 'assets/frames/New female account.json'
+                                    : 'assets/frames/New male account.json',
+                                width: 80,
+                                height: 80,
+                                fit: BoxFit.contain,
+                                repeat: true,
+                              ),
+                              CircleAvatar(
+                                radius: 28,
+                                backgroundColor: accentColor.withValues(alpha: 0.2),
+                                child: _buildAvatarIcon(
+                                    auth.user?['avatar']?.toString(),
+                                    displayNickname),
                               ),
                             ],
                           ),
