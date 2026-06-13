@@ -170,117 +170,120 @@ class _ProfilePageState extends State<ProfilePage> {
                 _glassCard(
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // 1. Details Column (now first on the right in RTL, start in LTR context)
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Name, Age/Gender icon, Flag Row
-                              Row(
-                                children: [
-                                  Text(
-                                    displayNickname,
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  // Age Chip (Without gender icon and without + sign)
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 6, vertical: 3),
-                                    decoration: BoxDecoration(
-                                      gradient: accentGradient,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Text(
-                                      userAge,
-                                      style: const TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 10),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  // Flag Emoji
-                                  Text(
-                                    _getCountryFlag(countryCode),
-                                    style: const TextStyle(fontSize: 16),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 4),
-                              // Player ID (above the bio, under the name, without container box)
-                              InkWell(
-                                onTap: () => _copyToClipboard(
-                                    publicId, "تم نسخ معرف اللاعب!"),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
+                    child: Directionality(
+                      textDirection: TextDirection.ltr,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // 1. Avatar (first, on the left)
+                          SizedBox(
+                            width: 80,
+                            height: 80,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Lottie.asset(
+                                  isFemale
+                                      ? 'assets/frames/New female account.json'
+                                      : 'assets/frames/New male account.json',
+                                  width: 80,
+                                  height: 80,
+                                  fit: BoxFit.contain,
+                                  repeat: true,
+                                ),
+                                CircleAvatar(
+                                  radius: 28,
+                                  backgroundColor: accentColor.withValues(alpha: 0.2),
+                                  child: _buildAvatarIcon(
+                                      auth.user?['avatar']?.toString(),
+                                      displayNickname),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          // 2. Details Column (second, starts right next to avatar)
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Name, Age/Gender icon, Flag Row
+                                Row(
                                   children: [
                                     Text(
-                                      "ID: $publicId",
-                                      style: TextStyle(
-                                        color: Colors.white.withValues(alpha: 0.5),
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w500,
+                                      displayNickname,
+                                      style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    // Age Chip (Without gender icon and without + sign)
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 6, vertical: 3),
+                                      decoration: BoxDecoration(
+                                        gradient: accentGradient,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Text(
+                                        userAge,
+                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 10),
                                       ),
                                     ),
-                                    const SizedBox(width: 4),
-                                    Icon(
-                                      Icons.copy_rounded,
-                                      size: 12,
-                                      color: Colors.white.withValues(alpha: 0.4),
+                                    const SizedBox(width: 8),
+                                    // Flag Emoji
+                                    Text(
+                                      _getCountryFlag(countryCode),
+                                      style: const TextStyle(fontSize: 16),
                                     ),
                                   ],
                                 ),
-                              ),
-                              const SizedBox(height: 8),
-                              // Bio Section
-                              Text(
-                                userBio,
-                                style: const TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 11,
-                                    height: 1.4),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
+                                const SizedBox(height: 4),
+                                // Player ID (above the bio, under the name, without container box)
+                                InkWell(
+                                  onTap: () => _copyToClipboard(
+                                      publicId, "تم نسخ معرف اللاعب!"),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        "ID: $publicId",
+                                        style: TextStyle(
+                                          color: Colors.white.withValues(alpha: 0.5),
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Icon(
+                                        Icons.copy_rounded,
+                                        size: 12,
+                                        color: Colors.white.withValues(alpha: 0.4),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                // Bio Section
+                                Text(
+                                  userBio,
+                                  style: const TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 11,
+                                      height: 1.4),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        // 2. Avatar (now second)
-                        SizedBox(
-                          width: 80,
-                          height: 80,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Lottie.asset(
-                                isFemale
-                                    ? 'assets/frames/New female account.json'
-                                    : 'assets/frames/New male account.json',
-                                width: 80,
-                                height: 80,
-                                fit: BoxFit.contain,
-                                repeat: true,
-                              ),
-                              CircleAvatar(
-                                radius: 28,
-                                backgroundColor: accentColor.withValues(alpha: 0.2),
-                                child: _buildAvatarIcon(
-                                    auth.user?['avatar']?.toString(),
-                                    displayNickname),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
