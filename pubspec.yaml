@@ -1,0 +1,35 @@
+name: greed_boxes
+description: "Real-time visual client for the Greed Boxes game engine."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management & Sockets
+  provider: ^6.1.2
+  socket_io_client: ^2.0.3
+  
+  # HTTP & Storage
+  http: ^1.2.1
+  shared_preferences: ^2.2.3
+  
+  # Device Fingerprinting
+  device_info_plus: ^10.1.0
+  uuid: ^4.3.3
+  
+  # Audio
+  audioplayers: ^6.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
