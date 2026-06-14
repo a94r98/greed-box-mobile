@@ -86,9 +86,6 @@ class _GreedBoxesAppState extends State<GreedBoxesApp> {
     // If already authenticated on startup
     if (auth.isAuthenticated) {
       socketProv.connect(auth.token!);
-    } else {
-      // Auto-trigger Guest Login immediately to go straight to the game
-      auth.loginGuest();
     }
   }
 

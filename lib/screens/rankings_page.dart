@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:lottie/lottie.dart';
@@ -83,27 +84,16 @@ class _RankingsPageState extends State<RankingsPage> {
           "لوحة الصدارة",
           style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: Color(0xFF1A0933),
             fontSize: 20,
             letterSpacing: 0.5,
           ),
         ),
         centerTitle: true,
       ),
-      extendBodyBehindAppBar: true,
+      extendBodyBehindAppBar: false,
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color(0xFF0E021F), // Dark Purple
-              Color(0xFF23073E), // Purple
-              Color(0xFF4A0A3D), // Pink-Plum
-              Color(0xFF0E021F), // Dark Purple
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
+        color: const Color(0xFFFCFAFF),
         child: SafeArea(
           bottom: false,
           child: wallet.isLoading && rankings.isEmpty
@@ -118,7 +108,7 @@ class _RankingsPageState extends State<RankingsPage> {
                       child: RefreshIndicator(
                         onRefresh: () async => _loadRankings(),
                         color: const Color(0xFFDA22FF),
-                        backgroundColor: const Color(0xFF0F0826),
+                        backgroundColor: const Color(0xFFF5EEFD),
                         child: ListView(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 12),
@@ -138,17 +128,17 @@ class _RankingsPageState extends State<RankingsPage> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
+                                 Text(
                                   "الترتيب العام (${rankings.length})",
-                                  style: TextStyle(
-                                    color: Colors.white.withValues(alpha: 0.6),
+                                  style: const TextStyle(
+                                    color: Color(0xFF6B5885),
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                Icon(
+                                const Icon(
                                   Icons.star_border_rounded,
-                                  color: Colors.white.withValues(alpha: 0.4),
+                                  color: Color(0xFF8E24AA),
                                   size: 16,
                                 ),
                               ],
@@ -165,15 +155,14 @@ class _RankingsPageState extends State<RankingsPage> {
                             final String gender = player['gender'] ?? "MALE";
 
                             return Card(
-                              color: const Color(0xFF0F0826)
-                                  .withValues(alpha: 0.7),
+                              color: Colors.white,
                               margin: const EdgeInsets.symmetric(vertical: 6),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16),
                                 side: BorderSide(
                                   color: auth.user?['publicId'] == publicId
-                                      ? const Color(0xFFDA22FF)
-                                      : Colors.purple.withValues(alpha: 0.1),
+                                      ? const Color(0xFFE91E63)
+                                      : const Color(0xFF8E24AA).withValues(alpha: 0.1),
                                   width: auth.user?['publicId'] == publicId
                                       ? 1.5
                                       : 1.0,
@@ -196,27 +185,27 @@ class _RankingsPageState extends State<RankingsPage> {
                                           fontSize: 14,
                                           color:
                                               auth.user?['publicId'] == publicId
-                                                  ? const Color(0xFFDA22FF)
-                                                  : Colors.white70,
+                                                  ? const Color(0xFFE91E63)
+                                                  : const Color(0xFF6B5885),
                                         ),
                                       ),
                                     ),
                                     const SizedBox(width: 8),
-                                    _buildListAvatar(nickname, gender),
+                                    _buildListAvatar(nickname, gender, avatarId: player['avatar']),
                                   ],
                                 ),
                                 title: Text(
                                   nickname,
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                    color: Color(0xFF1A0933),
                                     fontSize: 14,
                                   ),
                                 ),
                                 subtitle: Text(
                                   "ID: $publicId",
-                                  style: TextStyle(
-                                    color: Colors.white.withValues(alpha: 0.5),
+                                  style: const TextStyle(
+                                    color: Color(0xFF9E9E9E),
                                     fontSize: 11,
                                   ),
                                 ),
@@ -237,16 +226,16 @@ class _RankingsPageState extends State<RankingsPage> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(
+                                const Icon(
                                   Icons.emoji_events_outlined,
                                   size: 64,
-                                  color: Colors.white.withValues(alpha: 0.2),
+                                  color: Color(0xFFE8DBFA),
                                 ),
                                 const SizedBox(height: 16),
-                                Text(
+                                const Text(
                                   "لا يوجد متصدرين حالياً",
                                   style: TextStyle(
-                                    color: Colors.white.withValues(alpha: 0.5),
+                                    color: Color(0xFF6B5885),
                                     fontSize: 15,
                                   ),
                                 ),
@@ -265,18 +254,18 @@ class _RankingsPageState extends State<RankingsPage> {
                     padding: const EdgeInsets.only(
                         left: 20, right: 20, top: 16, bottom: 24),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF0F0826),
+                      color: Colors.white,
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(24),
                         topRight: Radius.circular(24),
                       ),
                       border: Border.all(
-                        color: Colors.purple.withValues(alpha: 0.2),
+                        color: const Color(0xFF8E24AA).withValues(alpha: 0.15),
                         width: 1,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.6),
+                          color: const Color(0xFF8E24AA).withValues(alpha: 0.08),
                           blurRadius: 15,
                           spreadRadius: 5,
                         ),
@@ -291,7 +280,8 @@ class _RankingsPageState extends State<RankingsPage> {
                             children: [
                               _buildListAvatar(
                                   myRank['displayNickname'] ?? "أنت",
-                                  myRank['gender'] ?? "MALE"),
+                                  myRank['gender'] ?? "MALE",
+                                  avatarId: myRank['avatar']),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Column(
@@ -301,14 +291,14 @@ class _RankingsPageState extends State<RankingsPage> {
                                       myRank['displayNickname'] ?? "أنت",
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.white,
+                                        color: Color(0xFF1A0933),
                                         fontSize: 15,
                                       ),
                                     ),
                                     Text(
                                       "ترتيبك الحالي: #${myRankNumber == -1 ? 'غير مصنف' : myRankNumber}",
                                       style: const TextStyle(
-                                        color: Color(0xFFDA22FF),
+                                        color: Color(0xFFE91E63),
                                         fontWeight: FontWeight.bold,
                                         fontSize: 13,
                                       ),
@@ -340,14 +330,14 @@ class _RankingsPageState extends State<RankingsPage> {
                               width: double.infinity,
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: Colors.purple.withValues(alpha: 0.1),
+                                color: const Color(0xFF8E24AA).withValues(alpha: 0.06),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Text(
                                 "باقي لك ${_formatCoins((myRank['coinsToRank99'] as num).toDouble())} للوصول إلى المركز 99",
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(
-                                  color: Colors.white70,
+                                  color: Color(0xFF6B5885),
                                   fontSize: 12,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -366,7 +356,7 @@ class _RankingsPageState extends State<RankingsPage> {
         );
   }
 
-  Widget _buildListAvatar(String nickname, String gender) {
+  Widget _buildListAvatar(String nickname, String gender, {String? avatarId}) {
     final String framePath = gender == "FEMALE"
         ? "assets/frames/New female account.json"
         : "assets/frames/New male account.json";
@@ -375,6 +365,7 @@ class _RankingsPageState extends State<RankingsPage> {
       nickname: nickname,
       frameAssetPath: framePath,
       size: 32,
+      avatarId: avatarId,
     );
   }
 }
@@ -396,9 +387,16 @@ class TopThreeWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F0826).withValues(alpha: 0.5),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.purple.withValues(alpha: 0.15)),
+        border: Border.all(color: const Color(0xFF8E24AA).withValues(alpha: 0.1)),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF8E24AA).withValues(alpha: 0.06),
+            blurRadius: 12,
+            spreadRadius: 2,
+          )
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -475,14 +473,15 @@ class TopThreeWidget extends StatelessWidget {
             nickname: nickname,
             frameAssetPath: framePath,
             size: avatarSize,
+            avatarId: player['avatar'],
           ),
           const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.08),
+              color: const Color(0xFFF5EEFD),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+              border: Border.all(color: const Color(0xFF8E24AA).withValues(alpha: 0.12)),
             ),
             child: Text(
               badge,
@@ -497,14 +496,14 @@ class TopThreeWidget extends StatelessWidget {
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 13,
-              color: Colors.white,
+              color: Color(0xFF1A0933),
             ),
           ),
           Text(
             "ID: $publicId",
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 10,
-              color: Colors.white.withValues(alpha: 0.4),
+              color: Color(0xFF9E9E9E),
             ),
           ),
           const SizedBox(height: 4),
@@ -533,12 +532,14 @@ class AnimatedFrameAvatar extends StatelessWidget {
   final String nickname;
   final String frameAssetPath;
   final double size;
+  final String? avatarId;
 
   const AnimatedFrameAvatar({
     super.key,
     required this.nickname,
     required this.frameAssetPath,
     required this.size,
+    this.avatarId,
   });
 
   @override
@@ -564,6 +565,58 @@ class AnimatedFrameAvatar extends StatelessWidget {
   }
 
   Widget _buildRawAvatar() {
+    if (avatarId != null && (avatarId!.startsWith('data:image/') || avatarId!.length > 100)) {
+      try {
+        final cleanBase64 = avatarId!.contains(',') ? avatarId!.split(',')[1] : avatarId!;
+        return Container(
+          width: size,
+          height: size,
+          decoration: const BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.transparent,
+          ),
+          child: ClipOval(
+            child: Image.memory(
+              base64Decode(cleanBase64),
+              fit: BoxFit.cover,
+              width: size,
+              height: size,
+            ),
+          ),
+        );
+      } catch (e) {
+        // fallback
+      }
+    } else if (avatarId == 'avatar_1') {
+      return Container(
+        width: size,
+        height: size,
+        decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.blueAccent),
+        child: Icon(Icons.verified_rounded, color: Colors.white, size: size * 0.5),
+      );
+    } else if (avatarId == 'avatar_2') {
+      return Container(
+        width: size,
+        height: size,
+        decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.purpleAccent),
+        child: Icon(Icons.auto_awesome_rounded, color: Colors.white, size: size * 0.5),
+      );
+    } else if (avatarId == 'avatar_3') {
+      return Container(
+        width: size,
+        height: size,
+        decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.greenAccent),
+        child: Icon(Icons.sports_esports_rounded, color: Colors.white, size: size * 0.5),
+      );
+    } else if (avatarId == 'avatar_4') {
+      return Container(
+        width: size,
+        height: size,
+        decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.orangeAccent),
+        child: Icon(Icons.flash_on_rounded, color: Colors.white, size: size * 0.5),
+      );
+    }
+
     final initials = nickname.isNotEmpty ? nickname[0].toUpperCase() : "?";
     final hash = nickname.hashCode;
     final List<Color> colors = [

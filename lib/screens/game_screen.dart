@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -1008,10 +1009,11 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                                 shape: BoxShape.circle,
                                 border: Border.all(color: medalColor, width: 2),
                               ),
-                              child: CircleAvatar(
-                                radius: 20,
-                                backgroundColor: const Color(0xFFF5EEFD),
-                                child: Icon(Icons.person, color: medalColor, size: 20),
+                              child: _buildAvatarIcon(
+                                winner['avatar'],
+                                name,
+                                size: 40,
+                                fallbackColor: medalColor,
                               ),
                             ),
                             Positioned(
@@ -1189,10 +1191,11 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                                     shape: BoxShape.circle,
                                     border: Border.all(color: medalColor, width: 2),
                                   ),
-                                  child: CircleAvatar(
-                                    radius: 20,
-                                    backgroundColor: const Color(0xFFF5EEFD),
-                                    child: Icon(Icons.person, color: medalColor, size: 20),
+                                  child: _buildAvatarIcon(
+                                    winner['avatar'],
+                                    name,
+                                    size: 40,
+                                    fallbackColor: medalColor,
                                   ),
                                 ),
                                 Positioned(
@@ -1224,6 +1227,64 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         ),
       ),
     );
+  }
+
+  Widget _buildAvatarIcon(String? avatarId, String displayNickname, {double size = 40, Color? fallbackColor}) {
+    if (avatarId != null && (avatarId.startsWith('data:image/') || avatarId.length > 100)) {
+      try {
+        final cleanBase64 = avatarId.contains(',') ? avatarId.split(',')[1] : avatarId;
+        return CircleAvatar(
+          radius: size / 2,
+          backgroundColor: Colors.transparent,
+          backgroundImage: MemoryImage(base64Decode(cleanBase64)),
+        );
+      } catch (e) {
+        // fallback
+      }
+    }
+
+    switch (avatarId) {
+      case 'avatar_1':
+        return Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(shape: BoxShape.circle, color: fallbackColor ?? Colors.blueAccent),
+          child: Icon(Icons.verified_rounded, color: Colors.white, size: size * 0.5),
+        );
+      case 'avatar_2':
+        return Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(shape: BoxShape.circle, color: fallbackColor ?? Colors.purpleAccent),
+          child: Icon(Icons.auto_awesome_rounded, color: Colors.white, size: size * 0.5),
+        );
+      case 'avatar_3':
+        return Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(shape: BoxShape.circle, color: fallbackColor ?? Colors.greenAccent),
+          child: Icon(Icons.sports_esports_rounded, color: Colors.white, size: size * 0.5),
+        );
+      case 'avatar_4':
+        return Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(shape: BoxShape.circle, color: fallbackColor ?? Colors.orangeAccent),
+          child: Icon(Icons.flash_on_rounded, color: Colors.white, size: size * 0.5),
+        );
+      default:
+        return Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(shape: BoxShape.circle, color: fallbackColor ?? Colors.grey),
+          alignment: Alignment.center,
+          child: Text(
+            displayNickname.isNotEmpty ? displayNickname[0].toUpperCase() : "؟",
+            style: TextStyle(
+                fontSize: size * 0.45, fontWeight: FontWeight.w800, color: Colors.white),
+          ),
+        );
+    }
   }
 }
 
