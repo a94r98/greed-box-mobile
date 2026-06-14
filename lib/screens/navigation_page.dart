@@ -15,14 +15,14 @@ class MainNavigationPage extends StatefulWidget {
 }
 
 class _MainNavigationPageState extends State<MainNavigationPage> {
-  int _currentIndex = 4;
+  int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    const ProfilePage(),
-    const WalletPage(),
-    const TasksPage(),
-    const RankingsPage(),
     const GameScreen(),
+    const RankingsPage(),
+    const TasksPage(),
+    const WalletPage(),
+    const ProfilePage(),
   ];
 
   @override
@@ -62,7 +62,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
                         color: Colors.white,
                       ),
                       textAlign: TextAlign.center,
-                    ),
+                     ),
                     const SizedBox(height: 16),
                     Text(
                       game.maintenanceMessage!,
@@ -92,11 +92,11 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
                 });
               },
               items: const [
-                BottomNavigationBarItem(icon: Icon(Icons.person_rounded), label: "حسابي"),
-                BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet_rounded), label: "المحفظة"),
-                BottomNavigationBarItem(icon: Icon(Icons.task_alt_rounded), label: "المهام"),
-                BottomNavigationBarItem(icon: Icon(Icons.leaderboard_rounded), label: "المتصدرين"),
                 BottomNavigationBarItem(icon: Icon(Icons.videogame_asset_rounded), label: "اللعبة"),
+                BottomNavigationBarItem(icon: Icon(Icons.leaderboard_rounded), label: "المتصدرين"),
+                BottomNavigationBarItem(icon: Icon(Icons.task_alt_rounded), label: "المهام"),
+                BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet_rounded), label: "المحفظة"),
+                BottomNavigationBarItem(icon: Icon(Icons.person_rounded), label: "حسابي"),
               ],
             ),
     );
