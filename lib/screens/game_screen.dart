@@ -60,6 +60,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   bool _isLoadingHistoryDetails = false;
 
   final List<int> _betKeys = [50, 500, 5000, 10000, 50000, 100000];
+  bool _showResults = false;
 
   @override
   void initState() {
@@ -77,6 +78,16 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         wallet.fetchRankings(auth.token!);
       }
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Precache all chest assets to prevent frame drops/stutter during reveal
+    for (int i = 1; i <= 8; i++) {
+      precacheImage(AssetImage("assets/chests/chest_${i}_closed.png"), context);
+      precacheImage(AssetImage("assets/chests/chest_${i}_open.png"), context);
+    }
   }
 
   @override
@@ -110,7 +121,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
     final clientBetId = UniqueKey().toString();
     try {
-      await game.placeBet(socketProv, boxIndex, betAmount, clientBetId);
+      await game.placeBet(socketProv, boxIndex, betAmount, clientBetId, _betCurrency);
       if (auth.token != null) {
         wallet.fetchProfile(auth.token!);
       }
@@ -134,6 +145,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       setState(() {
         _showWinNotice = false;
         _closedResultsManually = false;
+        _showResults = false;
       });
     }
 
@@ -203,7 +215,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       });
     }
 
-    await Future.delayed(const Duration(milliseconds: 1500));
+    // Wait 2200ms (1500ms reveal animation + 700ms buffer to see chest open) before showing popup
+    await Future.delayed(const Duration(milliseconds: 2200));
 
     if (!mounted) return;
 
@@ -214,18 +227,19 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     );
 
     final won = myWinningBet.boxIndex != -1;
-    final double mult = _revealedWinningBox! <= 3 ? 5.0 : (_revealedWinningBox == 4 ? 45.0 : (_revealedWinningBox == 5 ? 25.0 : (_revealedWinningBox == 6 ? 15.0 : 10.0)));
+    final double mult = _getBoxMultiplier(_revealedWinningBox!).toDouble();
 
     if (auth.token != null) {
       wallet.fetchProfile(auth.token!);
     }
 
-    if (won) {
-      setState(() {
+    setState(() {
+      _showResults = true;
+      if (won) {
         _lastWinAmount = myWinningBet.amount * mult;
         _showWinNotice = true;
-      });
-    }
+      }
+    });
   }
 
   @override
@@ -255,9 +269,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     final remainingSecs = (game.remainingMs / 1000).ceil();
 
     return Theme(
-      data: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: const Color(0xFF130A30), // Deep Purple Background matching the image
-        cardColor: const Color(0xFF241554),
+      data: ThemeData.light().copyWith(
+        scaffoldBackgroundColor: const Color(0xFFFCFAFF),
+        cardColor: const Color(0xFFFFFFFF),
       ),
       child: Scaffold(
         key: _scaffoldKey,
@@ -265,13 +279,12 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
-        endDrawer: _buildWinnersDrawer(wallet),
         body: Stack(
           children: [
             Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color(0xFF130A30), Color(0xFF200F4E)],
+                  colors: [Color(0xFFFFFFFF), Color(0xFFFCFAFF), Color(0xFFF0EBF7)],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),
@@ -291,10 +304,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                               style: TextStyle(
                                 fontSize: 32,
                                 fontWeight: FontWeight.w900,
-                                color: Colors.white,
+                                color: Color(0xFF1A0933),
                                 shadows: [
-                                  Shadow(color: Color(0xFF00E5FF), blurRadius: 15),
-                                  Shadow(color: Color(0xFFE040FB), blurRadius: 15),
+                                  Shadow(color: Color(0xFF8E24AA), blurRadius: 4),
                                 ],
                               ),
                             ),
@@ -310,7 +322,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                               decoration: BoxDecoration(
-                                color: Colors.black38,
+                                color: const Color(0xFFF5EEFD),
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(color: timerColor.withValues(alpha:0.3)),
                               ),
@@ -353,7 +365,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 ],
               ),
             ),
-            if (game.status == "FINALIZING")
+            if (game.status == "FINALIZING" && _showResults)
               _buildResultsPopup(context, game, wallet),
             _buildHistoryResultsPopup(),
             if (_isLoadingHistoryDetails)
@@ -371,15 +383,17 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     );
   }
 
-  Color _getBoxColor(int boxIndex) {
-    if (boxIndex == 0) return const Color(0xFFFF7B00); // Orange
-    if (boxIndex == 1) return const Color(0xFFE040FB); // Pink
-    if (boxIndex == 2) return const Color(0xFF8A2BE2); // Purple
-    if (boxIndex == 3) return const Color(0xFF00E5FF); // Sky Blue
-    if (boxIndex == 4) return const Color(0xFFFF1744); // Royal Red
-    if (boxIndex == 5) return const Color(0xFF2979FF); // Blue Crystal
-    if (boxIndex == 6) return const Color(0xFFD500F9); // Star Purple
-    return const Color(0xFF00E676); // Icy Green
+
+  int _getChestNumber(int boxIndex) {
+    return boxIndex + 1;
+  }
+
+  int _getBoxMultiplier(int boxIndex) {
+    if (boxIndex <= 3) return 5;
+    if (boxIndex == 4) return 10;
+    if (boxIndex == 5) return 15;
+    if (boxIndex == 6) return 25;
+    return 45;
   }
 
   // Timeline strip
@@ -387,16 +401,16 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
       decoration: BoxDecoration(
-        color: Colors.black26,
+        color: const Color(0xFFF1EDF8),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
-          const Text("النتيجة:", style: TextStyle(color: Colors.white70, fontSize: 13)),
+          const Text("النتيجة:", style: TextStyle(color: Color(0xFF1A0933), fontSize: 13)),
           const SizedBox(width: 8),
           Expanded(
             child: SizedBox(
-              height: 36,
+              height: 52,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: game.recentOutcomes.length,
@@ -404,29 +418,50 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                   final outcome = game.recentOutcomes[idx];
                   final isNew = idx == 0;
                   final int winBox = outcome['winningBox'] ?? 0;
-                  final Color chestColor = _getBoxColor(winBox);
+                  final int chestNum = _getChestNumber(winBox);
+                  final int mult = _getBoxMultiplier(winBox);
 
                   return GestureDetector(
                     onTap: () => _showPastRoundDetails(outcome['id']),
                     child: Container(
                       margin: const EdgeInsets.symmetric(horizontal: 4),
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
-                        color: Colors.black45,
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: isNew ? Colors.amber : Colors.transparent),
+                        border: Border.all(color: isNew ? const Color(0xFFFF007F) : const Color(0xFFE8DBFA)),
                       ),
-                      child: Row(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.inventory_2_rounded, size: 20, color: chestColor),
-                          if (isNew) ...[
-                            const SizedBox(width: 4),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 1),
-                              decoration: BoxDecoration(color: Colors.pink, borderRadius: BorderRadius.circular(4)),
-                              child: const Text("New", style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.white)),
-                            )
-                          ],
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Image.asset(
+                                "assets/chests/chest_${chestNum}_closed.png",
+                                width: 22,
+                                height: 22,
+                                fit: BoxFit.contain,
+                              ),
+                              if (isNew) ...[
+                                const SizedBox(width: 2),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 1),
+                                  decoration: BoxDecoration(color: Colors.pink, borderRadius: BorderRadius.circular(4)),
+                                  child: const Text("New", style: TextStyle(fontSize: 7, fontWeight: FontWeight.bold, color: Colors.white)),
+                                )
+                              ],
+                            ],
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            "*$mult",
+                            style: const TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF1A0933),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -496,6 +531,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                     ] : null,
                   ),
                   child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
                     onTap: () => _placeDirectBet(idx),
                     child: ChestWidget(
                       color: boxColor,
@@ -508,6 +544,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                       isHot: idx == hotBoxIdx,
                       gameStatus: game.status,
                       openProgress: _revealedWinningBox == idx ? _revealController.value : 0.0,
+                      boxIndex: idx,
                     ),
                   ),
                 ),
@@ -523,22 +560,22 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: List.generate(4, (i) {
             final idx = i + 4;
-            Color boxColor = const Color(0xFFFF1744); // Red Royal
-            String label = "45x مرة";
-            int mult = 45;
+            Color boxColor = const Color(0xFF00E676); // Icy Green
+            String label = "10x مرة";
+            int mult = 10;
 
             if (idx == 5) {
-              boxColor = const Color(0xFF2979FF); // Blue Crystal
-              label = "25x مرة";
-              mult = 25;
-            } else if (idx == 6) {
               boxColor = const Color(0xFFD500F9); // Star Purple
               label = "15x مرة";
               mult = 15;
+            } else if (idx == 6) {
+              boxColor = const Color(0xFF2979FF); // Blue Crystal
+              label = "25x مرة";
+              mult = 25;
             } else if (idx == 7) {
-              boxColor = const Color(0xFF00E676); // Icy Green
-              label = "10x مرة";
-              mult = 10;
+              boxColor = const Color(0xFFFF1744); // Red Royal
+              label = "45x مرة";
+              mult = 45;
             }
 
             final activeUserBets = game.myActiveBets.where((b) => b.boxIndex == idx);
@@ -573,6 +610,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                     ] : null,
                   ),
                   child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
                     onTap: () => _placeDirectBet(idx),
                     child: ChestWidget(
                       color: boxColor,
@@ -585,6 +623,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                       isHot: idx == hotBoxIdx,
                       gameStatus: game.status,
                       openProgress: _revealedWinningBox == idx ? _revealController.value : 0.0,
+                      boxIndex: idx,
                     ),
                   ),
                 ),
@@ -646,9 +685,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             decoration: BoxDecoration(
-              color: isActive ? Colors.amber : Colors.black26,
+              color: isActive ? const Color(0xFF8E24AA) : const Color(0xFFF5EEFD),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: isActive ? Colors.amber : Colors.white24),
+              border: Border.all(color: isActive ? const Color(0xFF8E24AA) : const Color(0xFFE8DBFA)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -662,7 +701,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 13,
-                    color: isActive ? Colors.black : Colors.white70,
+                    color: isActive ? Colors.white : const Color(0xFF6B5885),
                   ),
                 ),
               ],
@@ -699,9 +738,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: isSelected ? Colors.white.withValues(alpha:0.08) : Colors.transparent,
+              color: isSelected ? const Color(0xFF8E24AA).withValues(alpha:0.08) : Colors.transparent,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: isSelected ? Colors.amber : Colors.transparent, width: 1.5),
+              border: Border.all(color: isSelected ? const Color(0xFF8E24AA) : Colors.transparent, width: 1.5),
             ),
             child: Column(
               children: [
@@ -709,7 +748,11 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 const SizedBox(height: 6),
                 Text(
                   keyVal.toString(),
-                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: isSelected ? const Color(0xFF8E24AA) : const Color(0xFF6B5885),
+                  ),
                 ),
               ],
             ),
@@ -726,8 +769,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       decoration: const BoxDecoration(
-        color: Color(0xFF130A30),
-        border: Border(top: BorderSide(color: Colors.white12)),
+        color: Colors.white,
+        border: Border(top: BorderSide(color: Color(0xFFE8DBFA))),
       ),
       child: SafeArea(
         top: false,
@@ -737,7 +780,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             // Current user balance
             Row(
               children: [
-                Text("رصيدك: ${balance.toStringAsFixed(0)}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white)),
+                Text("رصيدك: ${balance.toStringAsFixed(0)}", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF1A0933))),
                 const SizedBox(width: 6),
                 _betCurrency == "FREE"
                     ? Image.asset('assets/diamond.png', width: 16, height: 16)
@@ -758,54 +801,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             else
               const Text(
                 "ربحت: 0",
-                style: TextStyle(color: Colors.white70, fontSize: 14),
+                style: TextStyle(color: Color(0xFF6B5885), fontSize: 14),
               ),
           ],
-        ),
-      ),
-    );
-  }
-
-  // Side Drawer for top winners
-  Widget _buildWinnersDrawer(WalletProvider wallet) {
-    return Drawer(
-      backgroundColor: const Color(0xFF130A30),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text(
-                "أفضل الفائزين (آخر 24 ساعة)",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.amber),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 20),
-              Expanded(
-                child: wallet.isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : ListView.builder(
-                        itemCount: min(3, wallet.rankings.length),
-                        itemBuilder: (ctx, idx) {
-                          final user = wallet.rankings[idx];
-                          return Card(
-                            color: const Color(0xFF241554),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor: Colors.amber.withValues(alpha:0.2),
-                                child: Text("#${idx + 1}", style: const TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
-                              ),
-                              title: Text(user['username'] ?? "لاعب", style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-                              trailing: Text("+${user['value']} شحن", style: const TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold)),
-                            ),
-                          );
-                        },
-                      ),
-              ),
-            ],
-          ),
         ),
       ),
     );
@@ -823,10 +821,10 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     if (winBox == 1) boxColor = const Color(0xFFE040FB);
     if (winBox == 2) boxColor = const Color(0xFF8A2BE2);
     if (winBox == 3) boxColor = const Color(0xFF00E5FF);
-    if (winBox == 4) { boxColor = const Color(0xFFFF1744); label = "45x مرة"; multVal = 45; }
-    if (winBox == 5) { boxColor = const Color(0xFF2979FF); label = "25x مرة"; multVal = 25; }
-    if (winBox == 6) { boxColor = const Color(0xFFD500F9); label = "15x مرة"; multVal = 15; }
-    if (winBox == 7) { boxColor = const Color(0xFF00E676); label = "10x مرة"; multVal = 10; }
+    if (winBox == 4) { boxColor = const Color(0xFF00E676); label = "10x مرة"; multVal = 10; }
+    if (winBox == 5) { boxColor = const Color(0xFFD500F9); label = "15x مرة"; multVal = 15; }
+    if (winBox == 6) { boxColor = const Color(0xFF2979FF); label = "25x مرة"; multVal = 25; }
+    if (winBox == 7) { boxColor = const Color(0xFFFF1744); label = "45x مرة"; multVal = 45; }
 
     // Calc personal stats
     final myBetsOnWinningBox = game.myActiveBets.where((b) => b.boxIndex == winBox);
@@ -861,12 +859,12 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           width: MediaQuery.of(context).size.width * 0.85,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: const Color(0xFF1B0F42),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: const Color(0xFF00E5FF), width: 2),
+            border: Border.all(color: const Color(0xFFFF007F), width: 2),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF00E5FF).withValues(alpha:0.3),
+                color: const Color(0xFF8E24AA).withValues(alpha:0.15),
                 blurRadius: 20,
                 spreadRadius: 2,
               )
@@ -881,7 +879,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white70),
+                    icon: const Icon(Icons.close, color: Color(0xFF6B5885)),
                     onPressed: () {
                       setState(() {
                         _closedResultsManually = true;
@@ -898,7 +896,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w900,
-                          color: Colors.white,
+                          color: Color(0xFF1A0933),
                           letterSpacing: 1.2,
                         ),
                       ),
@@ -926,6 +924,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                       isHot: false,
                       gameStatus: game.status,
                       openProgress: 1.0,
+                      boxIndex: winBox,
                     ),
                   ],
                 ),
@@ -942,13 +941,13 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       margin: const EdgeInsets.symmetric(horizontal: 6),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF241554),
+                        color: const Color(0xFFF5EEFD),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.white12),
+                        border: Border.all(color: const Color(0xFF8E24AA).withValues(alpha: 0.12)),
                       ),
                       child: Column(
                         children: [
-                          const Text("راهنت", style: TextStyle(color: Colors.white70, fontSize: 13)),
+                          const Text("راهنت", style: TextStyle(color: Color(0xFF6B5885), fontSize: 13)),
                           const SizedBox(height: 4),
                           Text(
                             "${totalMyBets.toStringAsFixed(0)} $currencySymbol",
@@ -964,17 +963,17 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       margin: const EdgeInsets.symmetric(horizontal: 6),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF241554),
+                        color: const Color(0xFFF5EEFD),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.greenAccent.withValues(alpha:0.3)),
+                        border: Border.all(color: Colors.green.withValues(alpha:0.3)),
                       ),
                       child: Column(
                         children: [
-                          const Text("فزت", style: TextStyle(color: Colors.white70, fontSize: 13)),
+                          const Text("فزت", style: TextStyle(color: Color(0xFF6B5885), fontSize: 13)),
                           const SizedBox(height: 4),
                           Text(
                             "${winReward.toStringAsFixed(0)} $currencySymbol",
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.greenAccent),
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.green),
                           ),
                         ],
                       ),
@@ -987,7 +986,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
               // Top Winners section
               const Text(
                 "أكبر الفائزين في هذه الجولة",
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white70),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1A0933)),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
@@ -1020,7 +1019,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                               ),
                               child: CircleAvatar(
                                 radius: 20,
-                                backgroundColor: Colors.white12,
+                                backgroundColor: const Color(0xFFF5EEFD),
                                 child: Icon(Icons.person, color: medalColor, size: 20),
                               ),
                             ),
@@ -1033,7 +1032,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                         const SizedBox(height: 6),
                         Text(
                           name,
-                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white),
+                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF1A0933)),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -1070,10 +1069,10 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     if (winBox == 1) boxColor = const Color(0xFFE040FB);
     if (winBox == 2) boxColor = const Color(0xFF8A2BE2);
     if (winBox == 3) boxColor = const Color(0xFF00E5FF);
-    if (winBox == 4) { boxColor = const Color(0xFFFF1744); label = "45x مرة"; multVal = 45; }
-    if (winBox == 5) { boxColor = const Color(0xFF2979FF); label = "25x مرة"; multVal = 25; }
-    if (winBox == 6) { boxColor = const Color(0xFFD500F9); label = "15x مرة"; multVal = 15; }
-    if (winBox == 7) { boxColor = const Color(0xFF00E676); label = "10x مرة"; multVal = 10; }
+    if (winBox == 4) { boxColor = const Color(0xFF00E676); label = "10x مرة"; multVal = 10; }
+    if (winBox == 5) { boxColor = const Color(0xFFD500F9); label = "15x مرة"; multVal = 15; }
+    if (winBox == 6) { boxColor = const Color(0xFF2979FF); label = "25x مرة"; multVal = 25; }
+    if (winBox == 7) { boxColor = const Color(0xFFFF1744); label = "45x مرة"; multVal = 45; }
 
     final currencySymbol = _betCurrency == "FREE" ? "🪙" : "💵";
 
@@ -1093,12 +1092,12 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           width: MediaQuery.of(context).size.width * 0.85,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: const Color(0xFF1B0F42),
+            color: Colors.white,
             borderRadius: BorderRadius.circular(24),
             border: Border.all(color: const Color(0xFFE040FB), width: 2), // Pink border for history details
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFFE040FB).withValues(alpha:0.3),
+                color: const Color(0xFFE040FB).withValues(alpha:0.25),
                 blurRadius: 20,
                 spreadRadius: 2,
               )
@@ -1113,7 +1112,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white70),
+                    icon: const Icon(Icons.close, color: Color(0xFF6B5885)),
                     onPressed: () {
                       setState(() {
                         _historyRoundDetails = null;
@@ -1130,7 +1129,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w900,
-                          color: Colors.white,
+                          color: Color(0xFF1A0933),
                         ),
                       ),
                     ],
@@ -1155,6 +1154,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                       isHot: false,
                       openProgress: 1.0,
                       gameStatus: "REVEALING",
+                      boxIndex: winBox,
                     ),
                   ],
                 ),
@@ -1164,7 +1164,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
               // Top Winners section
               const Text(
                 "أكبر الفائزين في هذه الجولة",
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white70),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF1A0933)),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
@@ -1174,7 +1174,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: winners.isEmpty
                   ? [
-                      const Text("لا يوجد فائزين في هذه الجولة", style: TextStyle(color: Colors.white38, fontSize: 13))
+                      const Text("لا يوجد فائزين في هذه الجولة", style: TextStyle(color: Color(0xFF6B5885), fontSize: 13))
                     ]
                   : List.generate(winners.length, (idx) {
                       final winner = winners[idx];
@@ -1200,7 +1200,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                                   ),
                                   child: CircleAvatar(
                                     radius: 20,
-                                    backgroundColor: Colors.white12,
+                                    backgroundColor: const Color(0xFFF5EEFD),
                                     child: Icon(Icons.person, color: medalColor, size: 20),
                                   ),
                                 ),
@@ -1213,7 +1213,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                             const SizedBox(height: 6),
                             Text(
                               name,
-                              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white),
+                              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Color(0xFF1A0933)),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'socket_provider.dart';
@@ -217,20 +218,23 @@ class GameProvider extends ChangeNotifier {
 
   // Socket request to place bet
   Future<void> placeBet(SocketProvider socketProvider, int boxIndex,
-      double amount, String clientBetId) async {
+      double amount, String clientBetId, String currency) async {
     final socket = socketProvider.socket;
     if (socket == null || !socketProvider.isConnected) {
       throw Exception("Game connection is offline.");
     }
 
+    final completer = Completer<void>();
+
     socket.emitWithAck("place_bet", {
       "boxIndex": boxIndex,
       "amount": amount,
-      "clientBetId": clientBetId
+      "clientBetId": clientBetId,
+      "currency": currency
     }, ack: (response) {
       final res = response as Map;
       if (res.containsKey("error")) {
-        debugPrint("Bet failed: ${res['error']}");
+        completer.completeError(res['error']);
       } else {
         final b = res['bet'];
         _myActiveBets.add(UserBet(
@@ -239,7 +243,10 @@ class GameProvider extends ChangeNotifier {
             amount: (b['amount'] as num).toDouble(),
             currency: b['currency']));
         notifyListeners();
+        completer.complete();
       }
     });
+
+    return completer.future;
   }
 }
