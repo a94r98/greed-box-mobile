@@ -25,6 +25,13 @@ class WalletProvider extends ChangeNotifier {
   Map<String, dynamic>? get profileStats => _profileStats;
   bool get isLoading => _isLoading;
 
+  // Update balances locally from socket payloads
+  void updateBalancesLocally(double free, double cash) {
+    _freeBalance = free;
+    _cashBalance = cash;
+    notifyListeners();
+  }
+
   // Sync balances and stats from server
   Future<void> fetchProfile(String token) async {
     _isLoading = true;

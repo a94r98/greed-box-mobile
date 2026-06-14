@@ -48,7 +48,12 @@ class _GreedBoxesAppState extends State<GreedBoxesApp> {
     // Register persistent callbacks on SocketProvider
     // These are called directly by the socket listener regardless of isConnected state
     socketProv.onWalletUpdate = (data) {
-      if (auth.token != null) {
+      if (data != null && data['freeBalance'] != null && data['cashBalance'] != null) {
+        wallet.updateBalancesLocally(
+          (data['freeBalance'] as num).toDouble(),
+          (data['cashBalance'] as num).toDouble()
+        );
+      } else if (auth.token != null) {
         wallet.fetchProfile(auth.token!);
       }
     };
@@ -101,27 +106,28 @@ class _GreedBoxesAppState extends State<GreedBoxesApp> {
         );
       },
       // Premium Light Theme definition
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: const Color(0xFF0C0518), // Deep Dark Purple
-        primaryColor: const Color(0xFFFFB703),            // Neon Gold
-        colorScheme: const ColorScheme.dark(
-          primary: Color(0xFFFFB703),      // Gold
-          secondary: Color(0xFF06D6A0),    // Mint Green
-          error: Color(0xFFFF5E62),        // Bright Crimson
-          surface: Color(0xFF190F2D),      // Luxury Purple Card Surface
+      theme: ThemeData.light().copyWith(
+        scaffoldBackgroundColor: const Color(0xFFFCFAFF), // Light Lavender White
+        primaryColor: const Color(0xFF8E24AA),            // Luxury Purple
+        colorScheme: const ColorScheme.light(
+          primary: Color(0xFF8E24AA),      // Purple
+          secondary: Color(0xFFE91E63),    // Pink
+          error: Color(0xFFFF2E93),        // Vivid Red
+          surface: Color(0xFFFFFFFF),      // Pure White Card Surface
+          onSurface: Color(0xFF1A0933),    // Deep Purple Text
         ),
         cardTheme: CardThemeData(
-          color: const Color(0xFF190F2D),
+          color: const Color(0xFFFFFFFF),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          elevation: 4,
-          shadowColor: Colors.black.withValues(alpha:0.4),
+          elevation: 6,
+          shadowColor: const Color(0xFF8E24AA).withValues(alpha: 0.08),
         ),
         appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF0C0518),
-          foregroundColor: Colors.white,
+          backgroundColor: Color(0xFFFCFAFF),
+          foregroundColor: Color(0xFF1A0933),
           elevation: 0,
           centerTitle: true,
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: IconThemeData(color: Color(0xFF1A0933)),
         ),
       ),
       home: auth.isAuthenticated ? const MainNavigationPage() : const AuthLandingPage(),

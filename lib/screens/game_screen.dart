@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -443,14 +442,6 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                                 height: 22,
                                 fit: BoxFit.contain,
                               ),
-                              if (isNew) ...[
-                                const SizedBox(width: 2),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 1),
-                                  decoration: BoxDecoration(color: Colors.pink, borderRadius: BorderRadius.circular(4)),
-                                  child: const Text("New", style: TextStyle(fontSize: 7, fontWeight: FontWeight.bold, color: Colors.white)),
-                                )
-                              ],
                             ],
                           ),
                           const SizedBox(height: 2),
