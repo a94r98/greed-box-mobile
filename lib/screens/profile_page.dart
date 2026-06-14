@@ -161,43 +161,28 @@ class _ProfilePageState extends State<ProfilePage> {
     final mostPlayed = "الصندوق الأسود"; // One game only
 
     return Scaffold(
+      backgroundColor: const Color(0xFFFCFAFF),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         elevation: 0,
+        surfaceTintColor: Colors.white,
         automaticallyImplyLeading: false,
+        title: const Text(
+          "حسابي",
+          style: TextStyle(
+            color: Color(0xFF1A0933),
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        centerTitle: true,
       ),
-      extendBodyBehindAppBar: true,
       body: Stack(
         children: [
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Color(0xFF110424),
-                  Color(0xFF250C4A),
-                  Color(0xFF430A6F)
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
-          ),
-          Positioned.fill(
-            child: Opacity(
-              opacity: 0.12,
-              child: Container(
-                decoration: const BoxDecoration(
-                  gradient: RadialGradient(
-                    colors: [Color(0xFF7C4DFF), Colors.transparent],
-                    radius: 0.8,
-                    center: Alignment(-0.8, -0.6),
-                  ),
-                ),
-              ),
-            ),
-          ),
+          Container(color: const Color(0xFFFCFAFF)),
+
           SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(16, 90, 16, 24),
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -214,15 +199,6 @@ class _ProfilePageState extends State<ProfilePage> {
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
-                              Lottie.asset(
-                                isFemale
-                                    ? 'assets/frames/New female account.json'
-                                    : 'assets/frames/New male account.json',
-                                width: 80,
-                                height: 80,
-                                fit: BoxFit.contain,
-                                repeat: true,
-                              ),
                               CircleAvatar(
                                 radius: 28,
                                 backgroundColor: accentColor.withOpacity(0.2),
@@ -230,6 +206,17 @@ class _ProfilePageState extends State<ProfilePage> {
                                     auth.user?['avatar']?.toString(),
                                     displayNickname,
                                     size: 56),
+                              ),
+                              IgnorePointer(
+                                child: Lottie.asset(
+                                  isFemale
+                                      ? 'assets/frames/New female account.json'
+                                      : 'assets/frames/New male account.json',
+                                  width: 80,
+                                  height: 80,
+                                  fit: BoxFit.contain,
+                                  repeat: true,
+                                ),
                               ),
                             ],
                           ),
@@ -248,7 +235,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     style: const TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.white),
+                                        color: Color(0xFF1A0933)),
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   const SizedBox(width: 8),
@@ -301,17 +288,17 @@ class _ProfilePageState extends State<ProfilePage> {
                                   children: [
                                     Text(
                                       "ID: $publicId",
-                                      style: TextStyle(
-                                        color: Colors.white.withOpacity(0.5),
+                                      style: const TextStyle(
+                                        color: Color(0xFF9E9E9E),
                                         fontSize: 11,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                     const SizedBox(width: 4),
-                                    Icon(
+                                    const Icon(
                                       Icons.copy_rounded,
                                       size: 12,
-                                      color: Colors.white.withOpacity(0.4),
+                                      color: Color(0xFFBDBDBD),
                                     ),
                                   ],
                                 ),
@@ -426,27 +413,21 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _glassCard({required Widget child}) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(24),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.09),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(
-                color: Colors.white.withOpacity(0.12), width: 1.2),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.18),
-                blurRadius: 22,
-                offset: const Offset(0, 8),
-              ),
-            ],
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+            color: const Color(0xFF8E24AA).withValues(alpha: 0.08), width: 1.2),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF8E24AA).withValues(alpha: 0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
-          child: child,
-        ),
+        ],
       ),
+      child: child,
     );
   }
 
@@ -454,13 +435,13 @@ class _ProfilePageState extends State<ProfilePage> {
     final isRtl = Directionality.of(context) == TextDirection.rtl;
     return ListTile(
       dense: true,
-      leading: Icon(icon, color: Colors.white70),
+      leading: Icon(icon, color: const Color(0xFF8E24AA)),
       title: Text(title,
           style: const TextStyle(
-              color: Colors.white, fontWeight: FontWeight.w600)),
+              color: Color(0xFF1A0933), fontWeight: FontWeight.w600)),
       trailing: Icon(
           isRtl ? Icons.arrow_back_ios_rounded : Icons.arrow_forward_ios_rounded,
-          color: Colors.white54,
+          color: const Color(0xFF9E9E9E),
           size: 18),
       onTap: onTap,
     );
@@ -490,24 +471,24 @@ class _ProfileEditChoicesPageState extends State<ProfileEditChoicesPage> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1F1237),
+        backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text(title, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+        title: Text(title, style: const TextStyle(color: Color(0xFF1A0933), fontSize: 16, fontWeight: FontWeight.bold)),
         content: TextField(
           controller: controller,
           maxLines: title.contains("البايو") ? 3 : 1,
-          style: const TextStyle(color: Colors.white),
+          style: const TextStyle(color: Color(0xFF1A0933)),
           decoration: InputDecoration(
             labelText: labelText,
-            labelStyle: const TextStyle(color: Colors.white60),
-            enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.white30)),
-            focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFF7C4DFF))),
+            labelStyle: const TextStyle(color: Color(0xFF6B5885)),
+            enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFE8DBFA))),
+            focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFF8E24AA))),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text("إلغاء", style: TextStyle(color: Colors.white54)),
+            child: const Text("إلغاء", style: TextStyle(color: Color(0xFF6B5885))),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -522,7 +503,7 @@ class _ProfileEditChoicesPageState extends State<ProfileEditChoicesPage> {
                 ));
               }
             },
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF7C4DFF)),
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF8E24AA)),
             child: const Text("حفظ", style: TextStyle(color: Colors.white)),
           )
         ],
@@ -532,18 +513,26 @@ class _ProfileEditChoicesPageState extends State<ProfileEditChoicesPage> {
 
   Future<void> _pickAndUploadImage() async {
     final picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery, imageQuality: 70);
+    final XFile? image = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+      maxWidth: 400,
+      maxHeight: 400,
+    );
     if (image != null) {
       setState(() { _isSaving = true; });
       try {
         final bytes = await image.readAsBytes();
-        final base64Image = "data:image/png;base64,${base64Encode(bytes)}";
+        // Detect mime type from header bytes
+        String mime = 'image/jpeg';
+        if (bytes.length > 3 && bytes[0] == 0x89 && bytes[1] == 0x50) mime = 'image/png';
+        final base64Image = "data:$mime;base64,${base64Encode(bytes)}";
         final auth = Provider.of<AuthProvider>(context, listen: false);
         final success = await auth.updateServerProfile(avatar: base64Image);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(success ? "تم تحديث الصورة الشخصية." : "فشل تحميل الصورة."),
-            backgroundColor: success ? const Color(0xFF06D6A0) : Colors.redAccent,
+            content: Text(success ? "تم تحديث الصورة الشخصية بنجاح. \u2705" : (auth.errorMessage ?? "فشل تحميل الصورة.")),
+            backgroundColor: success ? const Color(0xFF4CAF50) : Colors.redAccent,
           ));
         }
       } catch (e) {
@@ -559,104 +548,6 @@ class _ProfileEditChoicesPageState extends State<ProfileEditChoicesPage> {
     }
   }
 
-  void _showDefaultAvatarsSelector() {
-    final auth = Provider.of<AuthProvider>(context, listen: false);
-    final currentAvatar = auth.user?['avatar']?.toString() ?? "avatar_1";
-    
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: const Color(0xFF190F2D),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (ctx) {
-        final options = [
-          {'id': 'avatar_1', 'icon': Icons.verified_rounded},
-          {'id': 'avatar_2', 'icon': Icons.auto_awesome_rounded},
-          {'id': 'avatar_3', 'icon': Icons.sports_esports_rounded},
-          {'id': 'avatar_4', 'icon': Icons.flash_on_rounded},
-        ];
-        return Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text("اختر رمزاً افتراضياً", 
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
-                  textAlign: TextAlign.center),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: options.map((opt) {
-                  final id = opt['id'] as String;
-                  final icon = opt['icon'] as IconData;
-                  final selected = currentAvatar == id;
-                  return GestureDetector(
-                    onTap: () async {
-                      Navigator.pop(ctx);
-                      setState(() { _isSaving = true; });
-                      final success = await auth.updateServerProfile(avatar: id);
-                      if (mounted) {
-                        setState(() { _isSaving = false; });
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(success ? "تم تحديث الصورة." : "فشل التحديث."),
-                          backgroundColor: success ? const Color(0xFF06D6A0) : Colors.redAccent,
-                        ));
-                      }
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: selected ? const Color(0xFF7C4DFF) : Colors.white10,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: selected ? Colors.white : Colors.transparent, width: 2),
-                      ),
-                      child: Icon(icon, color: Colors.white, size: 36),
-                    ),
-                  );
-                }).toList(),
-              ),
-              const SizedBox(height: 10),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  void _showImageOptions() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: const Color(0xFF190F2D),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (ctx) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            leading: const Icon(Icons.photo_library_rounded, color: Colors.white),
-            title: const Text("تحميل صورة من الاستوديو", style: TextStyle(color: Colors.white)),
-            onTap: () {
-              Navigator.pop(ctx);
-              _pickAndUploadImage();
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.face_rounded, color: Colors.white),
-            title: const Text("اختر رمزاً شخصياً افتراضياً", style: TextStyle(color: Colors.white)),
-            onTap: () {
-              Navigator.pop(ctx);
-              _showDefaultAvatarsSelector();
-            },
-          ),
-          const SizedBox(height: 10),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final auth = Provider.of<AuthProvider>(context);
@@ -664,89 +555,97 @@ class _ProfileEditChoicesPageState extends State<ProfileEditChoicesPage> {
     final userBio = auth.user?['bio'] ?? "";
 
     return Scaffold(
+      backgroundColor: const Color(0xFFFCFAFF),
       appBar: AppBar(
-        title: const Text('تعديل الملف الشخصي'),
-        backgroundColor: Colors.transparent,
+        title: const Text('تعديل الملف الشخصي',
+            style: TextStyle(color: Color(0xFF1A0933), fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.white,
         elevation: 0,
+        surfaceTintColor: Colors.white,
+        iconTheme: const IconThemeData(color: Color(0xFF8E24AA)),
       ),
-      extendBodyBehindAppBar: true,
-      body: Stack(
-        children: [
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF110424), Color(0xFF250C4A), Color(0xFF430A6F)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (_isSaving)
+              const Padding(
+                padding: EdgeInsets.only(bottom: 12),
+                child: LinearProgressIndicator(
+                  color: Color(0xFF8E24AA),
+                  backgroundColor: Color(0xFFEDE7F6),
+                ),
               ),
-            ),
-          ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: const Color(0xFF8E24AA).withValues(alpha: 0.08)),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF8E24AA).withValues(alpha: 0.06),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  if (_isSaving)
-                    const Padding(
-                      padding: EdgeInsets.only(bottom: 12),
-                      child: LinearProgressIndicator(color: Color(0xFF7C4DFF), backgroundColor: Colors.white10),
-                    ),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(24),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.09),
-                          borderRadius: BorderRadius.circular(24),
-                          border: Border.all(color: Colors.white.withOpacity(0.12), width: 1.2),
-                        ),
-                        child: Column(
-                          children: [
-                            ListTile(
-                              leading: const Icon(Icons.photo_camera_rounded, color: Colors.white),
-                              title: const Text("تغيير الصورة الشخصية", style: TextStyle(color: Colors.white)),
-                              subtitle: const Text("تحميل صورة من الهاتف أو اختيار شخصية", style: TextStyle(color: Colors.white70, fontSize: 11)),
-                              trailing: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white54, size: 16),
-                              onTap: _isSaving ? null : _showImageOptions,
+                  ListTile(
+                    leading: const Icon(Icons.photo_camera_rounded, color: Color(0xFF8E24AA)),
+                    title: const Text("تغيير الصورة الشخصية",
+                        style: TextStyle(color: Color(0xFF1A0933), fontWeight: FontWeight.w600)),
+                    subtitle: const Text("تحميل صورة من الهاتف",
+                        style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 11)),
+                    trailing: const Icon(Icons.arrow_back_ios_rounded,
+                        color: Color(0xFF9E9E9E), size: 16),
+                    onTap: _isSaving ? null : _pickAndUploadImage,
+                  ),
+                  const Divider(color: Color(0xFFF3EEF9), height: 1),
+                  ListTile(
+                    leading: const Icon(Icons.edit_rounded, color: Color(0xFF8E24AA)),
+                    title: const Text("تغيير الاسم الظاهر",
+                        style: TextStyle(color: Color(0xFF1A0933), fontWeight: FontWeight.w600)),
+                    subtitle: Text(displayNickname,
+                        style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 11)),
+                    trailing: const Icon(Icons.arrow_back_ios_rounded,
+                        color: Color(0xFF9E9E9E), size: 16),
+                    onTap: _isSaving
+                        ? null
+                        : () => _showEditDialog(
+                              title: "تعديل الاسم الظاهر",
+                              initialValue: displayNickname,
+                              labelText: "الاسم الظاهر الجديد",
+                              onSave: (val) => auth.updateServerProfile(displayNickname: val),
                             ),
-                            const Divider(color: Colors.white10, height: 1),
-                            ListTile(
-                              leading: const Icon(Icons.edit_rounded, color: Colors.white),
-                              title: const Text("تغيير الاسم الظاهر", style: TextStyle(color: Colors.white)),
-                              subtitle: Text(displayNickname, style: const TextStyle(color: Colors.white70, fontSize: 11)),
-                              trailing: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white54, size: 16),
-                              onTap: _isSaving ? null : () => _showEditDialog(
-                                title: "تعديل الاسم الظاهر",
-                                initialValue: displayNickname,
-                                labelText: "الاسم الظاهر الجديد",
-                                onSave: (val) => auth.updateServerProfile(displayNickname: val),
-                              ),
+                  ),
+                  const Divider(color: Color(0xFFF3EEF9), height: 1),
+                  ListTile(
+                    leading: const Icon(Icons.note_alt_rounded, color: Color(0xFF8E24AA)),
+                    title: const Text("تغيير البايو (الوصف)",
+                        style: TextStyle(color: Color(0xFF1A0933), fontWeight: FontWeight.w600)),
+                    subtitle: Text(
+                        userBio.isEmpty ? "لا يوجد وصف حالياً" : userBio,
+                        style: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 11),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis),
+                    trailing: const Icon(Icons.arrow_back_ios_rounded,
+                        color: Color(0xFF9E9E9E), size: 16),
+                    onTap: _isSaving
+                        ? null
+                        : () => _showEditDialog(
+                              title: "تعديل البايو",
+                              initialValue: userBio,
+                              labelText: "اكتب شيئاً عن نفسك...",
+                              onSave: (val) => auth.updateServerProfile(bio: val),
                             ),
-                            const Divider(color: Colors.white10, height: 1),
-                            ListTile(
-                              leading: const Icon(Icons.note_alt_rounded, color: Colors.white),
-                              title: const Text("تغيير البايو (الوصف)", style: TextStyle(color: Colors.white)),
-                              subtitle: Text(userBio.isEmpty ? "لا يوجد وصف حالياً" : userBio, style: const TextStyle(color: Colors.white70, fontSize: 11), maxLines: 1, overflow: TextOverflow.ellipsis),
-                              trailing: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white54, size: 16),
-                              onTap: _isSaving ? null : () => _showEditDialog(
-                                title: "تعديل البايو",
-                                initialValue: userBio,
-                                labelText: "اكتب شيئاً عن نفسك...",
-                                onSave: (val) => auth.updateServerProfile(bio: val),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
                   ),
                 ],
               ),
             ),
-          )
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -831,9 +730,10 @@ class _InvitationsPageState extends State<InvitationsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("دعوات ومكافآت"),
+        title: const Text("دعوات ومكافآت", style: TextStyle(color: Color(0xFF1A0933), fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        iconTheme: const IconThemeData(color: Color(0xFF8E24AA)),
       ),
       extendBodyBehindAppBar: true,
       body: Stack(
@@ -841,15 +741,15 @@ class _InvitationsPageState extends State<InvitationsPage> {
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFF110424), Color(0xFF250C4A), Color(0xFF430A6F)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                colors: [Color(0xFFFFFFFF), Color(0xFFFCFAFF), Color(0xFFF0EBF7)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
             ),
           ),
           SafeArea(
             child: RefreshIndicator(
-              color: const Color(0xFF7C4DFF),
+              color: const Color(0xFF8E24AA),
               onRefresh: widget.onRefresh,
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
@@ -880,7 +780,7 @@ class _InvitationsPageState extends State<InvitationsPage> {
                                   child: Text(
                                     "اربح ${widget.inviteReward.toInt()} كنز لكل مستخدم!",
                                     style: const TextStyle(
-                                        color: Colors.white,
+                                        color: Color(0xFF1A0933),
                                         fontWeight: FontWeight.bold,
                                         fontSize: 15),
                                   ),
@@ -896,11 +796,11 @@ class _InvitationsPageState extends State<InvitationsPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const Text("كود الدعوة الخاص بك",
-                                        style: TextStyle(color: Colors.white70, fontSize: 12)),
+                                        style: TextStyle(color: Color(0xFF6B5885), fontSize: 12)),
                                     const SizedBox(height: 4),
                                     Text(widget.inviteCode,
                                         style: const TextStyle(
-                                            color: Colors.white,
+                                            color: Color(0xFF8E24AA),
                                             fontWeight: FontWeight.bold,
                                             fontSize: 20,
                                             letterSpacing: 1.5)),
@@ -916,7 +816,7 @@ class _InvitationsPageState extends State<InvitationsPage> {
                                           backgroundColor: Color(0xFF06D6A0),
                                         ));
                                       },
-                                      icon: const Icon(Icons.copy_rounded, color: Colors.white70),
+                                      icon: const Icon(Icons.copy_rounded, color: Color(0xFF8E24AA)),
                                     ),
                                     IconButton(
                                       onPressed: () {
@@ -925,7 +825,7 @@ class _InvitationsPageState extends State<InvitationsPage> {
                                           content: Text("يمكنك الآن نسخ ومشاركة الكود مع أصدقائك!"),
                                         ));
                                       },
-                                      icon: const Icon(Icons.share_rounded, color: Colors.white70),
+                                      icon: const Icon(Icons.share_rounded, color: Color(0xFF8E24AA)),
                                     ),
                                   ],
                                 )
@@ -935,7 +835,7 @@ class _InvitationsPageState extends State<InvitationsPage> {
                             Row(
                               children: [
                                 _buildMiniStat("إجمالي المدعوين", widget.invitedCount.toString(),
-                                    Icons.group_rounded, const Color(0xFF8E24AA)),
+                                      Icons.group_rounded, const Color(0xFF8E24AA)),
                                 const SizedBox(width: 12),
                                 _buildMiniStat(
                                     "المكافأة (لكل مستخدم)",
@@ -957,23 +857,23 @@ class _InvitationsPageState extends State<InvitationsPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text("أدخل كود دعوة صديق",
-                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+                                style: TextStyle(color: Color(0xFF1A0933), fontWeight: FontWeight.bold, fontSize: 14)),
                             const SizedBox(height: 10),
                             if (alreadyReferred)
                               Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: Colors.green.withOpacity(0.12),
+                                  color: Colors.green.withValues(alpha: 0.12),
                                   borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: Colors.green.withOpacity(0.3)),
+                                  border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
                                 ),
                                 child: Row(
                                   children: [
-                                    const Icon(Icons.check_circle, color: Color(0xFF06D6A0), size: 18),
+                                    const Icon(Icons.check_circle, color: Color(0xFF4CAF50), size: 18),
                                     const SizedBox(width: 8),
                                     Text(
                                       "لقد قمت بإدخال كود الدعوة سابقاً: ${auth.user?['referredByCode']}",
-                                      style: const TextStyle(color: Colors.white70, fontSize: 12),
+                                      style: const TextStyle(color: Color(0xFF2E7D32), fontSize: 12, fontWeight: FontWeight.bold),
                                     ),
                                   ],
                                 ),
@@ -984,12 +884,12 @@ class _InvitationsPageState extends State<InvitationsPage> {
                                   Expanded(
                                     child: TextField(
                                       controller: _codeController,
-                                      style: const TextStyle(color: Colors.white),
+                                      style: const TextStyle(color: Color(0xFF1A0933)),
                                       decoration: InputDecoration(
                                         hintText: "مثال: INVITE123",
-                                        hintStyle: const TextStyle(color: Colors.white30, fontSize: 13),
+                                        hintStyle: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 13),
                                         filled: true,
-                                        fillColor: Colors.white10,
+                                        fillColor: const Color(0xFFF5EEFD),
                                         border: OutlineInputBorder(
                                             borderRadius: BorderRadius.circular(12),
                                             borderSide: BorderSide.none),
@@ -1001,7 +901,7 @@ class _InvitationsPageState extends State<InvitationsPage> {
                                   ElevatedButton(
                                     onPressed: _isApplying ? null : _applyInviteCode,
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFF7C4DFF),
+                                      backgroundColor: const Color(0xFF8E24AA),
                                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                     ),
@@ -1018,7 +918,7 @@ class _InvitationsPageState extends State<InvitationsPage> {
                     const SizedBox(height: 16),
                     // Invited list title
                     const Text("الأصدقاء المسجلين من خلالك",
-                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+                        style: TextStyle(color: Color(0xFF1A0933), fontWeight: FontWeight.bold, fontSize: 14)),
                     const SizedBox(height: 8),
                     // Referrals List
                     if (widget.referralsList.isEmpty)
@@ -1027,14 +927,14 @@ class _InvitationsPageState extends State<InvitationsPage> {
                           padding: EdgeInsets.all(32.0),
                           child: Column(
                             children: [
-                              Icon(Icons.people_outline_rounded, color: Colors.white24, size: 48),
+                              Icon(Icons.people_outline_rounded, color: Color(0xFFBDBDBD), size: 48),
                               SizedBox(height: 12),
                               Text("لا يوجد أصدقاء مسجلين حالياً.",
-                                  style: TextStyle(color: Colors.white54, fontSize: 13),
+                                  style: TextStyle(color: Color(0xFF6B5885), fontSize: 13),
                                   textAlign: TextAlign.center),
                               SizedBox(height: 4),
                               Text("شارك الكود الخاص بك لتبدأ بربح الكونزات!",
-                                  style: TextStyle(color: Colors.white38, fontSize: 11),
+                                  style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 11),
                                   textAlign: TextAlign.center),
                             ],
                           ),
@@ -1056,21 +956,21 @@ class _InvitationsPageState extends State<InvitationsPage> {
                               leading: Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: const BoxDecoration(
-                                  color: Colors.white10,
+                                  color: Color(0xFFF5EEFD),
                                   shape: BoxShape.circle,
                                 ),
-                                child: const Icon(Icons.person, color: Colors.white70),
+                                child: const Icon(Icons.person, color: Color(0xFF8E24AA)),
                               ),
-                              title: Text(ref['username'] ?? "لاعب", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                              subtitle: Text("انضم في: $dateStr", style: const TextStyle(color: Colors.white60, fontSize: 11)),
+                              title: Text(ref['username'] ?? "لاعب", style: const TextStyle(color: Color(0xFF1A0933), fontWeight: FontWeight.bold)),
+                              subtitle: Text("انضم في: $dateStr", style: const TextStyle(color: Color(0xFF6B5885), fontSize: 11)),
                               trailing: Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: Colors.green.withOpacity(0.12),
+                                  color: Colors.green.withValues(alpha: 0.12),
                                   borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color: Colors.green.withOpacity(0.3)),
+                                  border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
                                 ),
-                                child: const Text("تم الدفع", style: TextStyle(color: Color(0xFF06D6A0), fontSize: 11, fontWeight: FontWeight.bold)),
+                                child: const Text("تم الدفع", style: TextStyle(color: Color(0xFF2E7D32), fontSize: 11, fontWeight: FontWeight.bold)),
                               ),
                             ),
                           );
@@ -1087,20 +987,20 @@ class _InvitationsPageState extends State<InvitationsPage> {
   }
 
   Widget _glassCard({required Widget child}) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(24),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.09),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(
-                color: Colors.white.withOpacity(0.12), width: 1.2),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: const Color(0xFF8E24AA).withValues(alpha: 0.08), width: 1.2),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF8E24AA).withValues(alpha: 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
-          child: child,
-        ),
+        ],
       ),
+      child: child,
     );
   }
 
@@ -1109,9 +1009,9 @@ class _InvitationsPageState extends State<InvitationsPage> {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.08),
+          color: const Color(0xFFF5EEFD),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withOpacity(0.08)),
+          border: Border.all(color: const Color(0xFFE8DBFA)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1120,12 +1020,12 @@ class _InvitationsPageState extends State<InvitationsPage> {
             const SizedBox(height: 8),
             Text(value,
                 style: const TextStyle(
-                    color: Colors.white,
+                    color: Color(0xFF1A0933),
                     fontWeight: FontWeight.bold,
                     fontSize: 15)),
             const SizedBox(height: 4),
             Text(title,
-                style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                style: const TextStyle(color: Color(0xFF6B5885), fontSize: 12)),
           ],
         ),
       ),
@@ -1160,9 +1060,10 @@ class GameStatsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("إحصائيات اللعبة"),
+        title: const Text("إحصائيات اللعبة", style: TextStyle(color: Color(0xFF1A0933), fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        iconTheme: const IconThemeData(color: Color(0xFF8E24AA)),
       ),
       extendBodyBehindAppBar: true,
       body: Stack(
@@ -1170,9 +1071,9 @@ class GameStatsPage extends StatelessWidget {
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFF110424), Color(0xFF250C4A), Color(0xFF430A6F)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                colors: [Color(0xFFFFFFFF), Color(0xFFFCFAFF), Color(0xFFF0EBF7)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
             ),
           ),
@@ -1188,9 +1089,9 @@ class GameStatsPage extends StatelessWidget {
                     alignment: WrapAlignment.center,
                     children: [
                       _buildSmallStatCard("الجولات الملعوبة", played.toString(),
-                          Icons.sports_esports_rounded, const Color(0xFF7C4DFF)),
+                          Icons.sports_esports_rounded, const Color(0xFF8E24AA)),
                       _buildSmallStatCard("جولات الفوز", won.toString(),
-                          Icons.emoji_events_rounded, Colors.greenAccent),
+                          Icons.emoji_events_rounded, const Color(0xFF2E7D32)),
                       _buildSmallStatCard("جولات الخسارة", lost.toString(),
                           Icons.sports_mma_rounded, Colors.redAccent),
                       _buildSmallStatCard(
@@ -1207,11 +1108,11 @@ class GameStatsPage extends StatelessWidget {
                       padding: EdgeInsets.all(16.0),
                       child: Column(
                         children: [
-                          Icon(Icons.info_outline_rounded, color: Colors.white60, size: 24),
+                          Icon(Icons.info_outline_rounded, color: Color(0xFF8E24AA), size: 24),
                           SizedBox(height: 8),
                           Text(
                             "تنويه: الإحصائيات معروضة في الوقت الفعلي وهي تشمل نشاطك في اللعبة الرئيسية لـ Greedy Box (الصندوق الأسود).",
-                            style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.4),
+                            style: TextStyle(color: Color(0xFF6B5885), fontSize: 12, height: 1.4),
                             textAlign: TextAlign.center,
                           ),
                         ],
@@ -1228,20 +1129,20 @@ class GameStatsPage extends StatelessWidget {
   }
 
   Widget _glassCard({required Widget child}) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(24),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.09),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(
-                color: Colors.white.withOpacity(0.12), width: 1.2),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: const Color(0xFF8E24AA).withValues(alpha: 0.08), width: 1.2),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF8E24AA).withValues(alpha: 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
-          child: child,
-        ),
+        ],
       ),
+      child: child,
     );
   }
 
@@ -1250,9 +1151,9 @@ class GameStatsPage extends StatelessWidget {
       width: 155,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.08),
+        color: const Color(0xFFF5EEFD),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: const Color(0xFFE8DBFA)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1261,18 +1162,17 @@ class GameStatsPage extends StatelessWidget {
           const SizedBox(height: 12),
           Text(value,
               style: const TextStyle(
-                  color: Colors.white,
+                  color: Color(0xFF1A0933),
                   fontWeight: FontWeight.bold,
                   fontSize: 18)),
           const SizedBox(height: 8),
           Text(title,
-              style: const TextStyle(color: Colors.white70, fontSize: 12)),
+              style: const TextStyle(color: Color(0xFF6B5885), fontSize: 12)),
         ],
       ),
     );
   }
 }
-
 // ─────────────────────────────────────────────────────────────────────────────
 // 4. History Screen (Luxurious design with dropdown Year/Month filtering)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1352,9 +1252,10 @@ class _HistoryPageState extends State<HistoryPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("سجل العمليات واللعب"),
+        title: const Text("سجل العمليات واللعب", style: TextStyle(color: Color(0xFF1A0933), fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        iconTheme: const IconThemeData(color: Color(0xFF8E24AA)),
       ),
       extendBodyBehindAppBar: true,
       body: Stack(
@@ -1362,9 +1263,9 @@ class _HistoryPageState extends State<HistoryPage> {
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFF110424), Color(0xFF250C4A), Color(0xFF430A6F)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                colors: [Color(0xFFFFFFFF), Color(0xFFFCFAFF), Color(0xFFF0EBF7)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
             ),
           ),
@@ -1385,11 +1286,11 @@ class _HistoryPageState extends State<HistoryPage> {
                                 value: _selectedYear,
                                 decoration: const InputDecoration(
                                   labelText: "السنة",
-                                  labelStyle: TextStyle(color: Colors.white70, fontSize: 12),
+                                  labelStyle: TextStyle(color: Color(0xFF6B5885), fontSize: 12),
                                   border: InputBorder.none,
                                 ),
-                                dropdownColor: const Color(0xFF190F2D),
-                                style: const TextStyle(color: Colors.white),
+                                dropdownColor: Colors.white,
+                                style: const TextStyle(color: Color(0xFF1A0933)),
                                 items: _years.map((y) => DropdownMenuItem(value: y, child: Text(y))).toList(),
                                 onChanged: (val) {
                                   if (val != null) {
@@ -1407,11 +1308,11 @@ class _HistoryPageState extends State<HistoryPage> {
                                 value: _selectedMonth,
                                 decoration: const InputDecoration(
                                   labelText: "الشهر",
-                                  labelStyle: TextStyle(color: Colors.white70, fontSize: 12),
+                                  labelStyle: TextStyle(color: Color(0xFF6B5885), fontSize: 12),
                                   border: InputBorder.none,
                                 ),
-                                dropdownColor: const Color(0xFF190F2D),
-                                style: const TextStyle(color: Colors.white),
+                                dropdownColor: Colors.white,
+                                style: const TextStyle(color: Color(0xFF1A0933)),
                                 items: _monthNames.map((m) => DropdownMenuItem(value: m, child: Text(m))).toList(),
                                 onChanged: (val) {
                                   if (val != null) {
@@ -1435,7 +1336,7 @@ class _HistoryPageState extends State<HistoryPage> {
                         children: [
                           TabBar(
                             labelColor: Colors.white,
-                            unselectedLabelColor: Colors.white70,
+                            unselectedLabelColor: const Color(0xFF6B5885),
                             indicator: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
                               color: widget.accentColor,
@@ -1448,11 +1349,11 @@ class _HistoryPageState extends State<HistoryPage> {
                           const SizedBox(height: 12),
                           Expanded(
                             child: _isLoading
-                                ? const Center(child: CircularProgressIndicator(color: Color(0xFF7C4DFF)))
+                                ? const Center(child: CircularProgressIndicator(color: Color(0xFF8E24AA)))
                                 : TabBarView(
                                     children: [
-                                      _buildHistoryList(cashHistory, "لا توجد عمليات شحن في الفلتر المحدد", Colors.orangeAccent),
-                                      _buildHistoryList(freeHistory, "لا توجد ألعاب ماسات في الفلتر المحدد", Colors.purpleAccent),
+                                      _buildHistoryList(cashHistory, "لا توجد عمليات شحن في الفلتر المحدد", Colors.orange),
+                                      _buildHistoryList(freeHistory, "لا توجد ألعاب ماسات في الفلتر المحدد", const Color(0xFF8E24AA)),
                                     ],
                                   ),
                           ),
@@ -1470,20 +1371,20 @@ class _HistoryPageState extends State<HistoryPage> {
   }
 
   Widget _glassCard({required Widget child}) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(24),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.09),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(
-                color: Colors.white.withOpacity(0.12), width: 1.2),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: const Color(0xFF8E24AA).withValues(alpha: 0.08), width: 1.2),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF8E24AA).withValues(alpha: 0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
-          child: child,
-        ),
+        ],
       ),
+      child: child,
     );
   }
 
@@ -1491,7 +1392,7 @@ class _HistoryPageState extends State<HistoryPage> {
     if (items.isEmpty) {
       return Center(
         child: Text(emptyLabel,
-            style: const TextStyle(color: Colors.white54, fontSize: 13),
+            style: const TextStyle(color: Color(0xFF6B5885), fontSize: 13),
             textAlign: TextAlign.center),
       );
     }
@@ -1515,7 +1416,7 @@ class _HistoryPageState extends State<HistoryPage> {
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                    color: accent.withOpacity(0.18),
+                    color: accent.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Icon(Icons.history_rounded, color: accent, size: 24),
@@ -1527,12 +1428,12 @@ class _HistoryPageState extends State<HistoryPage> {
                     children: [
                       Text(
                         record['description']?.toString() ?? "لعب جولة",
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                        style: const TextStyle(color: Color(0xFF1A0933), fontWeight: FontWeight.bold, fontSize: 13),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         _formatHistoryDate(record),
-                        style: const TextStyle(color: Colors.white60, fontSize: 11),
+                        style: const TextStyle(color: Color(0xFF6B5885), fontSize: 11),
                       ),
                     ],
                   ),
@@ -1542,12 +1443,13 @@ class _HistoryPageState extends State<HistoryPage> {
                   children: [
                     Text(
                       "$amount ${isCash ? 'كونز' : 'ماسة'}",
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                      style: const TextStyle(color: Color(0xFF1A0933), fontWeight: FontWeight.bold, fontSize: 13),
                     ),
                     const SizedBox(height: 4),
                     Text(status,
                         style: TextStyle(
-                            color: status == 'ناجح' ? Colors.greenAccent : Colors.white38,
+                            color: status == 'ناجح' ? const Color(0xFF2E7D32) : Colors.redAccent,
+                            fontWeight: FontWeight.bold,
                             fontSize: 11)),
                   ],
                 ),
@@ -1741,9 +1643,10 @@ class _SupportChatPageState extends State<SupportChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("الدعم الفني المباشر"),
+        title: const Text("الدعم الفني المباشر", style: TextStyle(color: Color(0xFF1A0933), fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        iconTheme: const IconThemeData(color: Color(0xFF8E24AA)),
       ),
       extendBodyBehindAppBar: true,
       body: Stack(
@@ -1751,9 +1654,9 @@ class _SupportChatPageState extends State<SupportChatPage> {
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFF110424), Color(0xFF250C4A), Color(0xFF430A6F)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                colors: [Color(0xFFFFFFFF), Color(0xFFFCFAFF), Color(0xFFF0EBF7)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
             ),
           ),
@@ -1767,11 +1670,11 @@ class _SupportChatPageState extends State<SupportChatPage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.support_agent_rounded, size: 64, color: Colors.white24),
+                              Icon(Icons.support_agent_rounded, size: 64, color: Color(0xFFBDBDBD)),
                               SizedBox(height: 12),
-                              Text("مرحباً بك! تواصل معنا مباشرة هنا", style: TextStyle(color: Colors.white70)),
+                              Text("مرحباً بك! تواصل معنا مباشرة هنا", style: TextStyle(color: Color(0xFF6B5885), fontWeight: FontWeight.bold)),
                               SizedBox(height: 4),
-                              Text("فريق الدعم متاح لمساعدتك على مدار الساعة.", style: TextStyle(color: Colors.white38, fontSize: 11)),
+                              Text("فريق الدعم متاح لمساعدتك على مدار الساعة.", style: TextStyle(color: Color(0xFF9E9E9E), fontSize: 11)),
                             ],
                           ),
                         )
@@ -1790,13 +1693,14 @@ class _SupportChatPageState extends State<SupportChatPage> {
                                 margin: const EdgeInsets.symmetric(vertical: 4),
                                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                                 decoration: BoxDecoration(
-                                  color: isUser ? const Color(0xFF7C4DFF).withOpacity(0.85) : Colors.white10,
+                                  color: isUser ? const Color(0xFF8E24AA) : const Color(0xFFF5EEFD),
                                   borderRadius: BorderRadius.only(
                                     topLeft: const Radius.circular(16),
                                     topRight: const Radius.circular(16),
                                     bottomLeft: isUser ? Radius.zero : const Radius.circular(16),
                                     bottomRight: isUser ? const Radius.circular(16) : Radius.zero,
                                   ),
+                                  border: isUser ? null : Border.all(color: const Color(0xFFE8DBFA)),
                                 ),
                                 constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.75),
                                 child: Column(
@@ -1812,7 +1716,7 @@ class _SupportChatPageState extends State<SupportChatPage> {
                                       const SizedBox(height: 6),
                                     ],
                                     if (msgText != null && msgText.isNotEmpty)
-                                      Text(msgText, style: const TextStyle(color: Colors.white, fontSize: 13, height: 1.4)),
+                                      Text(msgText, style: TextStyle(color: isUser ? Colors.white : const Color(0xFF1A0933), fontSize: 13, height: 1.4)),
                                   ],
                                 ),
                               ),
@@ -1824,12 +1728,12 @@ class _SupportChatPageState extends State<SupportChatPage> {
                 if (_selectedImage != null)
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    color: Colors.black26,
+                    color: const Color(0xFFF5EEFD),
                     child: Row(
                       children: [
-                        const Icon(Icons.image_rounded, color: Color(0xFF7C4DFF)),
+                        const Icon(Icons.image_rounded, color: Color(0xFF8E24AA)),
                         const SizedBox(width: 10),
-                        const Expanded(child: Text("تم إرفاق صورة", style: TextStyle(color: Colors.white70, fontSize: 12))),
+                        const Expanded(child: Text("تم إرفاق صورة", style: TextStyle(color: Color(0xFF6B5885), fontSize: 12))),
                         IconButton(
                           onPressed: () => setState(() { _selectedImage = null; }),
                           icon: const Icon(Icons.cancel_rounded, color: Colors.redAccent),
@@ -1840,20 +1744,23 @@ class _SupportChatPageState extends State<SupportChatPage> {
                 // Input controls
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                  color: Colors.black45,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    border: Border(top: BorderSide(color: Color(0xFFE8DBFA))),
+                  ),
                   child: Row(
                     children: [
                       IconButton(
                         onPressed: _pickImage,
-                        icon: const Icon(Icons.image_rounded, color: Colors.white70),
+                        icon: const Icon(Icons.image_rounded, color: Color(0xFF8E24AA)),
                       ),
                       Expanded(
                         child: TextField(
                           controller: _msgController,
-                          style: const TextStyle(color: Colors.white, fontSize: 13),
+                          style: const TextStyle(color: Color(0xFF1A0933), fontSize: 13),
                           decoration: InputDecoration(
                             hintText: "اكتب رسالة للدعم...",
-                            hintStyle: const TextStyle(color: Colors.white30, fontSize: 13),
+                            hintStyle: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 13),
                             border: InputBorder.none,
                             contentPadding: const EdgeInsets.symmetric(horizontal: 10),
                           ),
@@ -1862,8 +1769,8 @@ class _SupportChatPageState extends State<SupportChatPage> {
                       IconButton(
                         onPressed: _isSending ? null : _sendMessage,
                         icon: _isSending
-                            ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                            : const Icon(Icons.send_rounded, color: Color(0xFF7C4DFF)),
+                            ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Color(0xFF8E24AA), strokeWidth: 2))
+                            : const Icon(Icons.send_rounded, color: Color(0xFF8E24AA)),
                       ),
                     ],
                   ),
@@ -1871,7 +1778,6 @@ class _SupportChatPageState extends State<SupportChatPage> {
               ],
             ),
           ),
-          // Floating Action Button with expandable menu for WhatsApp & Telegram support accounts
           Positioned(
             bottom: 80,
             right: 16,
@@ -1936,19 +1842,19 @@ class _SettingsPageState extends State<SettingsPage> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1F1237),
+        backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text("الخصوصية والأمان", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+        title: const Text("الخصوصية والأمان", style: TextStyle(color: Color(0xFF1A0933), fontWeight: FontWeight.bold, fontSize: 16)),
         content: const SingleChildScrollView(
           child: Text(
             "تلتزم إدارة Greedy Box بحماية خصوصية كافة اللاعبين بشكل كامل. يتم تشفير كلمات المرور وتخزين الحسابات باستخدام أحدث أساليب الأمان الرقمي.\n\nنهتم بخصوصيتك ولا نشارك أي بيانات تابعة لك مع جهات خارجية.",
-            style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.5),
+            style: TextStyle(color: Color(0xFF6B5885), fontSize: 12, height: 1.5),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text("حسناً", style: TextStyle(color: Color(0xFF7C4DFF), fontWeight: FontWeight.bold)),
+            child: const Text("حسناً", style: TextStyle(color: Color(0xFF8E24AA), fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -1959,14 +1865,14 @@ class _SettingsPageState extends State<SettingsPage> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF1F1237),
+        backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text("تغيير اللغة", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-        content: const Text("اللغة الحالية هي العربية. هل ترغب في التبديل؟", style: TextStyle(color: Colors.white70, fontSize: 13)),
+        title: const Text("تغيير اللغة", style: TextStyle(color: Color(0xFF1A0933), fontWeight: FontWeight.bold, fontSize: 16)),
+        content: const Text("اللغة الحالية هي العربية. هل ترغب في التبديل؟", style: TextStyle(color: Color(0xFF6B5885), fontSize: 13)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text("العربية", style: TextStyle(color: Colors.white54)),
+            child: const Text("العربية", style: TextStyle(color: Color(0xFF6B5885))),
           ),
           TextButton(
             onPressed: () {
@@ -1975,7 +1881,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 content: Text("English mode is currently under dev config."),
               ));
             },
-            child: const Text("English", style: TextStyle(color: Color(0xFF7C4DFF), fontWeight: FontWeight.bold)),
+            child: const Text("English", style: TextStyle(color: Color(0xFF8E24AA), fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -1988,9 +1894,10 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("الإعدادات"),
+        title: const Text("الإعدادات", style: TextStyle(color: Color(0xFF1A0933), fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        iconTheme: const IconThemeData(color: Color(0xFF8E24AA)),
       ),
       extendBodyBehindAppBar: true,
       body: Stack(
@@ -1998,9 +1905,9 @@ class _SettingsPageState extends State<SettingsPage> {
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFF110424), Color(0xFF250C4A), Color(0xFF430A6F)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                colors: [Color(0xFFFFFFFF), Color(0xFFFCFAFF), Color(0xFFF0EBF7)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
             ),
           ),
@@ -2010,78 +1917,79 @@ class _SettingsPageState extends State<SettingsPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(24),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.09),
-                          borderRadius: BorderRadius.circular(24),
-                          border: Border.all(color: Colors.white.withOpacity(0.12), width: 1.2),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(color: const Color(0xFF8E24AA).withValues(alpha: 0.08), width: 1.2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF8E24AA).withValues(alpha: 0.05),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
                         ),
-                        child: Column(
-                          children: [
-                            ListTile(
-                              leading: const Icon(Icons.lock_outline_rounded, color: Colors.white),
-                              title: const Text("الخصوصية والأمان", style: TextStyle(color: Colors.white)),
-                              trailing: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white54, size: 16),
-                              onTap: _showPrivacyDialog,
-                            ),
-                            const Divider(color: Colors.white10, height: 1),
-                            ListTile(
-                              leading: const Icon(Icons.language_rounded, color: Colors.white),
-                              title: const Text("تغيير اللغة", style: TextStyle(color: Colors.white)),
-                              trailing: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white54, size: 16),
-                              onTap: _changeLanguageDialog,
-                            ),
-                            const Divider(color: Colors.white10, height: 1),
-                            SwitchListTile(
-                              value: _notifyPush,
-                              activeColor: const Color(0xFF7C4DFF),
-                              secondary: const Icon(Icons.notifications_active_rounded, color: Colors.white),
-                              title: const Text("تنبيهات الإشعارات الخارجية", style: TextStyle(color: Colors.white, fontSize: 14)),
-                              onChanged: (val) => setState(() { _notifyPush = val; }),
-                            ),
-                            const Divider(color: Colors.white10, height: 1),
-                            SwitchListTile(
-                              value: _notifyInApp,
-                              activeColor: const Color(0xFF7C4DFF),
-                              secondary: const Icon(Icons.app_registration_rounded, color: Colors.white),
-                              title: const Text("الإشعارات والرسائل داخل التطبيق", style: TextStyle(color: Colors.white, fontSize: 14)),
-                              onChanged: (val) => setState(() { _notifyInApp = val; }),
-                            ),
-                            const Divider(color: Colors.white10, height: 1),
-                            ListTile(
-                              leading: const Icon(Icons.logout_rounded, color: Colors.redAccent),
-                              title: const Text("تسجيل الخروج", style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
-                              onTap: () async {
-                                final confirm = await showDialog<bool>(
-                                  context: context,
-                                  builder: (ctx) => AlertDialog(
-                                    backgroundColor: const Color(0xFF1F1237),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                    title: const Text("تسجيل الخروج", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                                    content: const Text("هل أنت متأكد من رغبتك في تسجيل الخروج؟", style: TextStyle(color: Colors.white70)),
-                                    actions: [
-                                      TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text("إلغاء", style: TextStyle(color: Colors.white54))),
-                                      ElevatedButton(
-                                        onPressed: () => Navigator.pop(ctx, true),
-                                        style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
-                                        child: const Text("تأكيد", style: TextStyle(color: Colors.white)),
-                                      ),
-                                    ],
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        ListTile(
+                          leading: const Icon(Icons.lock_outline_rounded, color: Color(0xFF8E24AA)),
+                          title: const Text("الخصوصية والأمان", style: TextStyle(color: Color(0xFF1A0933))),
+                          trailing: const Icon(Icons.arrow_back_ios_rounded, color: Color(0xFF9E9E9E), size: 16),
+                          onTap: _showPrivacyDialog,
+                        ),
+                        const Divider(color: Color(0xFFF3EEF9), height: 1),
+                        ListTile(
+                          leading: const Icon(Icons.language_rounded, color: Color(0xFF8E24AA)),
+                          title: const Text("تغيير اللغة", style: TextStyle(color: Color(0xFF1A0933))),
+                          trailing: const Icon(Icons.arrow_back_ios_rounded, color: Color(0xFF9E9E9E), size: 16),
+                          onTap: _changeLanguageDialog,
+                        ),
+                        const Divider(color: Color(0xFFF3EEF9), height: 1),
+                        SwitchListTile(
+                          value: _notifyPush,
+                          activeColor: const Color(0xFF8E24AA),
+                          secondary: const Icon(Icons.notifications_active_rounded, color: Color(0xFF8E24AA)),
+                          title: const Text("تنبيهات الإشعارات الخارجية", style: TextStyle(color: Color(0xFF1A0933), fontSize: 14)),
+                          onChanged: (val) => setState(() { _notifyPush = val; }),
+                        ),
+                        const Divider(color: Color(0xFFF3EEF9), height: 1),
+                        SwitchListTile(
+                          value: _notifyInApp,
+                          activeColor: const Color(0xFF8E24AA),
+                          secondary: const Icon(Icons.app_registration_rounded, color: Color(0xFF8E24AA)),
+                          title: const Text("الإشعارات والرسائل داخل التطبيق", style: TextStyle(color: Color(0xFF1A0933), fontSize: 14)),
+                          onChanged: (val) => setState(() { _notifyInApp = val; }),
+                        ),
+                        const Divider(color: Color(0xFFF3EEF9), height: 1),
+                        ListTile(
+                          leading: const Icon(Icons.logout_rounded, color: Colors.redAccent),
+                          title: const Text("تسجيل الخروج", style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                          onTap: () async {
+                            final confirm = await showDialog<bool>(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                title: const Text("تسجيل الخروج", style: TextStyle(color: Color(0xFF1A0933), fontWeight: FontWeight.bold)),
+                                content: const Text("هل أنت متأكد من رغبتك في تسجيل الخروج؟", style: TextStyle(color: Color(0xFF6B5885))),
+                                actions: [
+                                  TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text("إلغاء", style: TextStyle(color: Color(0xFF6B5885)))),
+                                  ElevatedButton(
+                                    onPressed: () => Navigator.pop(ctx, true),
+                                    style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+                                    child: const Text("تأكيد", style: TextStyle(color: Colors.white)),
                                   ),
-                                );
-                                if (confirm == true && mounted) {
-                                  auth.logout();
-                                  Navigator.of(context).popUntil((route) => route.isFirst);
-                                }
-                              },
-                            ),
-                          ],
+                                ],
+                              ),
+                            );
+                            if (confirm == true && mounted) {
+                              auth.logout();
+                              Navigator.of(context).popUntil((route) => route.isFirst);
+                            }
+                          },
                         ),
-                      ),
+                      ],
                     ),
                   ),
                 ],
