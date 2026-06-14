@@ -43,6 +43,21 @@ class _GreedBoxesAppState extends State<GreedBoxesApp> {
     final auth = Provider.of<AuthProvider>(context, listen: false);
     final socketProv = Provider.of<SocketProvider>(context, listen: false);
     final gameProv = Provider.of<GameProvider>(context, listen: false);
+    final wallet = Provider.of<WalletProvider>(context, listen: false);
+
+    // Register persistent callbacks on SocketProvider
+    // These are called directly by the socket listener regardless of isConnected state
+    socketProv.onWalletUpdate = (data) {
+      if (auth.token != null) {
+        wallet.fetchProfile(auth.token!);
+      }
+    };
+
+    socketProv.onKickOut = (data) {
+      // Force disconnect and logout immediately
+      socketProv.disconnect();
+      auth.logout();
+    };
 
     // Watch auth status changes to connect/disconnect socket
     auth.addListener(() {
@@ -79,6 +94,12 @@ class _GreedBoxesAppState extends State<GreedBoxesApp> {
     return MaterialApp(
       title: 'صناديق الطمع - Greed Boxes',
       debugShowCheckedModeBanner: false,
+      builder: (context, child) {
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: child!,
+        );
+      },
       // Premium Light Theme definition
       theme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: const Color(0xFF0C0518), // Deep Dark Purple
@@ -107,4 +128,3 @@ class _GreedBoxesAppState extends State<GreedBoxesApp> {
     );
   }
 }
-

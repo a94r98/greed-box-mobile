@@ -847,20 +847,13 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
     return Positioned.fill(
       child: TweenAnimationBuilder<double>(
-        tween: Tween(begin: 0.0, end: 1.0),
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeOutCubic,
+        tween: Tween(begin: 1.0, end: 1.0),
+        duration: Duration.zero,
         builder: (context, value, child) {
           return Container(
-            color: Colors.black.withValues(alpha: 0.7 * value),
+            color: Colors.black.withValues(alpha: 0.7),
             child: Center(
-              child: Transform.scale(
-                scale: 0.9 + (value * 0.1),
-                child: Opacity(
-                  opacity: value,
-                  child: child,
-                ),
-              ),
+              child: child,
             ),
           );
         },
@@ -1086,20 +1079,13 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
     return Positioned.fill(
       child: TweenAnimationBuilder<double>(
-        tween: Tween(begin: 0.0, end: 1.0),
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeOutCubic,
+        tween: Tween(begin: 1.0, end: 1.0),
+        duration: Duration.zero,
         builder: (context, value, child) {
           return Container(
-            color: Colors.black.withValues(alpha: 0.7 * value),
+            color: Colors.black.withValues(alpha: 0.7),
             child: Center(
-              child: Transform.scale(
-                scale: 0.9 + (value * 0.1),
-                child: Opacity(
-                  opacity: value,
-                  child: child,
-                ),
-              ),
+              child: child,
             ),
           );
         },

@@ -388,28 +388,59 @@ class AuthProvider extends ChangeNotifier {
     return false;
   }
 
-  Future<void> updateLocalProfile({
+  Future<bool> updateServerProfile({
     String? displayNickname,
     String? bio,
     String? whatsapp,
     int? age,
     String? gender,
+    String? avatar,
   }) async {
-    if (_user == null) return;
-    _user = {
-      ..._user!,
-      if (displayNickname != null) 'displayNickname': displayNickname,
-      if (bio != null) 'bio': bio,
-      if (whatsapp != null) 'whatsapp': whatsapp,
-      if (age != null) 'age': age,
-      if (gender != null) 'gender': gender,
-    };
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString("user", jsonEncode(_user));
-    if (_token != null) {
-      await _saveAccountToList(_token!, _user!, remember: true);
-    }
+    if (_token == null) return false;
+    _isLoading = true;
+    _errorMessage = null;
     notifyListeners();
+
+    try {
+      final res = await http.put(
+        Uri.parse("$apiBase/player/profile"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $_token",
+        },
+        body: jsonEncode({
+          if (displayNickname != null) "displayNickname": displayNickname,
+          if (bio != null) "bio": bio,
+          if (whatsapp != null) "whatsapp": whatsapp,
+          if (age != null) "age": age,
+          if (gender != null) "gender": gender,
+          if (avatar != null) "avatar": avatar,
+        }),
+      );
+
+      final data = jsonDecode(res.body);
+      if (res.statusCode == 200) {
+        if (_user != null) {
+          _user = {
+            ..._user!,
+            ...data['user']
+          };
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString("user", jsonEncode(_user));
+          await _saveAccountToList(_token!, _user!, remember: true);
+        }
+        _isLoading = false;
+        notifyListeners();
+        return true;
+      }
+      _errorMessage = data['error'] ?? "فشل تحديث الحساب.";
+    } catch (e) {
+      _errorMessage = "خطأ في الشبكة: $e";
+    }
+
+    _isLoading = false;
+    notifyListeners();
+    return false;
   }
 
   // Password Recovery Flow

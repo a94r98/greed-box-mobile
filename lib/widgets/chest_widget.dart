@@ -42,7 +42,6 @@ class _ChestWidgetState extends State<ChestWidget>
 
   // Particle list for coin explosion
   final List<CoinParticle> _particles = [];
-  final Random _random = Random();
 
   @override
   void initState() {
@@ -72,17 +71,11 @@ class _ChestWidgetState extends State<ChestWidget>
     );
 
     _openController.addListener(() {
-      if (_openController.value > 0.1 &&
-          _particles.isEmpty &&
-          widget.isWinner) {
-        _spawnParticles();
-      }
       setState(() {});
     });
 
     if (widget.openProgress > 0) {
-      _openController.animateTo(widget.openProgress,
-          duration: const Duration(milliseconds: 300));
+      _openController.value = widget.openProgress;
     }
   }
 
@@ -98,12 +91,9 @@ class _ChestWidgetState extends State<ChestWidget>
       _glowController.value = 0.0;
     }
 
-    // Phase 5 & 6: Trigger lid open & coin particles when winner
+    // Phase 5 & 6: Set lid open instantly when winner
     if (widget.openProgress > 0) {
-      if (_openController.value != widget.openProgress) {
-        _openController.animateTo(widget.openProgress,
-            duration: const Duration(milliseconds: 300));
-      }
+      _openController.value = widget.openProgress;
     } else {
       _openController.reset();
       _particles.clear();
@@ -118,37 +108,6 @@ class _ChestWidgetState extends State<ChestWidget>
     super.dispose();
   }
 
-  void _spawnParticles() {
-    _particles.clear();
-    // Spawn 30 to 50 coin particles
-    final count = 30 + _random.nextInt(21);
-    for (int i = 0; i < count; i++) {
-      final double angle =
-          -pi / 6 - _random.nextDouble() * (2 * pi / 3); // upward arc
-      final double speed = 3.0 + _random.nextDouble() * 5.0;
-      _particles.add(
-        CoinParticle(
-          x: 0,
-          y: -10,
-          vx: cos(angle) * speed,
-          vy: sin(angle) * speed,
-          rotation: _random.nextDouble() * 2 * pi,
-          rotationSpeed: (_random.nextDouble() - 0.5) * 0.5,
-          scale: 0.6 + _random.nextDouble() * 0.6,
-        ),
-      );
-    }
-  }
-
-  void _updateParticles() {
-    for (var p in _particles) {
-      p.x += p.vx;
-      p.y += p.vy;
-      p.vy += 0.25; // gravity
-      p.rotation += p.rotationSpeed;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final bool isPremium = widget.multiplierValue > 5;
@@ -156,10 +115,6 @@ class _ChestWidgetState extends State<ChestWidget>
     final double baseHeight = isPremium ? 74.0 : 64.0;
     final isCash =
         widget.totalBets.contains("💵") || widget.totalBets.contains("Cash");
-
-    if (_particles.isNotEmpty) {
-      _updateParticles();
-    }
 
     // Phase 3 & 4: Winner scale up and dimming others
     // If there is a winner, darken non-winners. Scale winner by 1.2

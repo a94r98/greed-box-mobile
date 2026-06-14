@@ -1142,8 +1142,12 @@ class _AuthLandingPageState extends State<AuthLandingPage> {
                         auth.removeSavedAccount(acc['publicId']);
                       },
                     ),
-                    const Icon(Icons.arrow_forward_ios_rounded,
-                        color: Color(0xFFFF007F), size: 14),
+                    Icon(
+                        Directionality.of(context) == TextDirection.rtl
+                            ? Icons.arrow_back_ios_rounded
+                            : Icons.arrow_forward_ios_rounded,
+                        color: const Color(0xFFFF007F),
+                        size: 14),
                   ],
                 ),
                 onTap: () async {
